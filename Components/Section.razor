@@ -1,0 +1,10 @@
+﻿@namespace EccomercePage.Components
+
+@code {
+    [Parameter] required public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Class { get; set; } = string.Empty;
+}
+
+<section class="max-w-full text-gray-500 sm:text-lg dark:text-gray-400 flex items-center @Class">
+    @ChildContent
+</section>
