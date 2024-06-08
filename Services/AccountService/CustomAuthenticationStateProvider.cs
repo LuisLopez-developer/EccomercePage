@@ -1,5 +1,5 @@
-﻿using EccomerceBlazorWasm.Interfaces;
-using EccomerceBlazorWasm.Models;
+﻿using EccomercePage.Interfaces;
+using EccomercePage.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Data;
 using System.Net.Http.Json;
@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
-namespace EccomerceBlazorWasm.Services
+namespace EccomercePage.Services
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider, IAccountManagement
     {

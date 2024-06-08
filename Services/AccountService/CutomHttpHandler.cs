@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
-namespace EccomerceBlazorWasm.Services
+namespace EccomercePage.Services
 {
     public class CutomHttpHandler : DelegatingHandler
     {

@@ -1,6 +1,6 @@
-﻿using EccomerceBlazorWasm.Models;
+﻿using EccomercePage.Models;
 
-namespace EccomerceBlazorWasm.Interfaces
+namespace EccomercePage.Interfaces
 {
     public interface IAccountManagement
     {

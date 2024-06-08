@@ -1,4 +1,4 @@
-﻿namespace EccomerceBlazorWasm.Models
+﻿namespace EccomercePage.Models
 {
     public class FormResultModel
     {

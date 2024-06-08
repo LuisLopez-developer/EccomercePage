@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using EccomercePage;
 using Microsoft.AspNetCore.Components.Authorization;
-using EccomerceBlazorWasm.Services;
-using EccomerceBlazorWasm.Interfaces;
+using EccomercePage.Services;
+using EccomercePage.Interfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
