@@ -130,9 +130,8 @@ namespace EccomercePage.Services
                 };
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
