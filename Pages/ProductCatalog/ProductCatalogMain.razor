@@ -1,0 +1,148 @@
+﻿@page "/p"
+
+@using EccomercePage.Components
+@using EccomercePage.Models.ProductModel
+@using Microsoft.JSInterop
+
+@inject IJSRuntime js
+
+
+<PageTitle>Celulares y más</PageTitle>
+
+<Section Class="">
+    <div id="indicators-carousel" class="relative w-full group" data-carousel="static">
+        <!-- Carousel wrapper -->
+        <div class="relative overflow-hidden rounded-lg">
+            <div class="flex transition-transform duration-700 ease-in-out" data-carousel-inner>
+                <!-- Items -->
+                <div class="flex gap-[14px]">
+                    @foreach (var product in Products)
+                    {
+                        <ProductCard Class="w-[244.8px] h-84" ImageSrc="@product.ImageSrc"
+                                     ImageAlt="@product.ImageAlt"
+                                     Name="@product.Name"
+                                     Price="@product.Price" />
+                    }
+                </div>
+            </div>
+        </div>
+        <!-- Slider controls -->
+        @if (isVisiblePrevious)
+        {
+            <button type="button" class="absolute top-1/2 right-full transform translate-x-1/2 -translate-y-1/2 z-30 flex items-center justify-center h-14 w-14 cursor-pointer group-hover:flex hidden focus:outline-none" @onclick="PreviousSlide">
+                <span class="inline-flex items-center justify-center w-full h-full rounded-full bg-white/30 group-hover:bg-gray-700/90 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
+                    <svg class="w-4 h-4 text-blue-700 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4" />
+                    </svg>
+                    <span class="sr-only">Previous</span>
+                </span>
+            </button>
+        }
+        @if (isVisibleNext)
+        {
+            <button type="button" class="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 z-30 flex items-center justify-center cursor-pointer group-hover:flex hidden focus:outline-none" @onclick="NextSlide">
+                <span class="inline-flex items-center justify-center h-14 w-14 rounded-full bg-white/30 group-hover:bg-gray-700/90 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
+                    <svg class="w-4 h-4 text-blue-700 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
+                    </svg>
+                    <span class="sr-only">Next</span>
+                </span>
+            </button>
+        }  
+    </div>
+
+</Section>
+
+<script>
+    window.carouselInterop = {
+        updateCarousel: function (currentIndex) {
+            const cardWidth = 244.8; // ancho del card en píxeles
+            const gap = 14; // espacio entre los cards en píxeles
+            const visibleItems = 5; // número de items visibles en el carrusel
+
+            // Calculamos el offset en píxeles
+            const offset = currentIndex * (cardWidth + gap);
+            const carouselInner = document.querySelector('[data-carousel-inner]');
+
+            carouselInner.style.transform = `translateX(-${offset}px)`;
+        }
+    };
+</script>
+
+@code {
+    private List<ProductViewModel> Products = new List<ProductViewModel>()
+    {
+        new ProductViewModel
+        {
+            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_0.webp",
+            ImageAlt = "Apple Watch Series 7",
+            Name = "Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport",
+            Price = 599m,
+        },
+        new ProductViewModel
+        {
+            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_2.webp",
+            ImageAlt = "Apple Watch Series 7",
+            Name = "Apple Watch Series 722 GPS, Aluminium Case, Starlight Sport",
+            Price = 599m
+        },
+        new ProductViewModel
+        {
+            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_1.webp",
+            ImageAlt = "Apple Watch Series 7",
+            Name = "Apple Watch Series 731 GPS, Aluminium Case, Starlight Sport",
+            Price = 599m
+        },
+        new ProductViewModel
+        {
+            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_0.webp",
+            ImageAlt = "Apple Watch Series 7",
+            Name = "Apple Watch Series 723 GPS, Aluminium Case, Starlight Sport",
+            Price = 599m
+        },
+        new ProductViewModel
+        {
+            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_2.webp",
+            ImageAlt = "Apple Watch Series 7",
+            Name = "Apple Watch Series 71 GPS, Aluminium Case, Starlight Sport",
+            Price = 599m
+        },
+        new ProductViewModel
+        {
+            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_1.webp",
+            ImageAlt = "Apple Watch Series 7",
+            Name = "Apple Watch Series 75 GPS, Aluminium Case, Starlight Sport",
+            Price = 599m
+        },
+        new ProductViewModel
+        {
+            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_2.webp",
+            ImageAlt = "Apple Watch Series 7",
+            Name = "Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport",
+            Price = 599m
+        },
+        new ProductViewModel
+        {
+            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_0.webp",
+            ImageAlt = "Apple Watch Series 7",
+            Name = "Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport",
+            Price = 599m
+        }
+    };
+
+    private int currentIndex = 0;
+    private bool isVisiblePrevious = false;
+    private bool isVisibleNext = true;
+
+    private async Task UpdateCarousel(int newIndex)
+    {
+        currentIndex = newIndex;
+        isVisiblePrevious = currentIndex > 0;  // Actualiza la visibilidad del botón "Previous" basado en si el índice actual es mayor que cero
+        isVisibleNext = currentIndex < Products.Count - 5; // Actualiza la visibilidad del botón "Next" basado en si el índice actual es menor que el total de productos menos 5
+
+        await js.InvokeVoidAsync("carouselInterop.updateCarousel", currentIndex);
+    }
+
+    private async Task NextSlide() => await UpdateCarousel(currentIndex + 1); // Método para avanzar al siguiente slide del carrusel
+    private async Task PreviousSlide() => await UpdateCarousel(currentIndex - 1); // Método para retroceder al slide anterior del carrusel
+}
