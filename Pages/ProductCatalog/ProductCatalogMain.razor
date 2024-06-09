@@ -18,8 +18,8 @@
                 <div class="flex gap-[14px]">
                     @foreach (var product in Products)
                     {
-                        <ProductCard Class="w-[244.8px] h-84" ImageSrc="@product.ImageSrc"
-                                     ImageAlt="@product.ImageAlt"
+                        <ProductCard Class="w-[244.8px] h-84" ImageSrc="@product.ImageUrl"
+                                     ImageAlt="@product.Name"
                                      Name="@product.Name"
                                      Price="@product.Price" />
                     }
@@ -70,64 +70,9 @@
 </script>
 
 @code {
-    private List<ProductViewModel> Products = new List<ProductViewModel>()
+    private List<ProductCatalogViewModel> Products = new List<ProductCatalogViewModel>()
     {
-        new ProductViewModel
-        {
-            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_0.webp",
-            ImageAlt = "Apple Watch Series 7",
-            Name = "Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport",
-            Price = 599m,
-        },
-        new ProductViewModel
-        {
-            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_2.webp",
-            ImageAlt = "Apple Watch Series 7",
-            Name = "Apple Watch Series 722 GPS, Aluminium Case, Starlight Sport",
-            Price = 599m
-        },
-        new ProductViewModel
-        {
-            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_1.webp",
-            ImageAlt = "Apple Watch Series 7",
-            Name = "Apple Watch Series 731 GPS, Aluminium Case, Starlight Sport",
-            Price = 599m
-        },
-        new ProductViewModel
-        {
-            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_0.webp",
-            ImageAlt = "Apple Watch Series 7",
-            Name = "Apple Watch Series 723 GPS, Aluminium Case, Starlight Sport",
-            Price = 599m
-        },
-        new ProductViewModel
-        {
-            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_2.webp",
-            ImageAlt = "Apple Watch Series 7",
-            Name = "Apple Watch Series 71 GPS, Aluminium Case, Starlight Sport",
-            Price = 599m
-        },
-        new ProductViewModel
-        {
-            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_1.webp",
-            ImageAlt = "Apple Watch Series 7",
-            Name = "Apple Watch Series 75 GPS, Aluminium Case, Starlight Sport",
-            Price = 599m
-        },
-        new ProductViewModel
-        {
-            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_2.webp",
-            ImageAlt = "Apple Watch Series 7",
-            Name = "Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport",
-            Price = 599m
-        },
-        new ProductViewModel
-        {
-            ImageSrc = "https://teamstarteight.work/Default_celular_para_mostrar_e_un_eccomerce_0.webp",
-            ImageAlt = "Apple Watch Series 7",
-            Name = "Apple Watch Series 7 GPS, Aluminium Case, Starlight Sport",
-            Price = 599m
-        }
+
     };
 
     private int currentIndex = 0;

@@ -1,6 +1,6 @@
 ﻿namespace EccomercePage.Models.ProductModel
 {
-    public class ProductViewModel
+    public class ProductCatalogViewModel
     {
         public required int Id { get; set; }
         public required string Name { get; set; }
