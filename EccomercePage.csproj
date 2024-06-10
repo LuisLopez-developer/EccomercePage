@@ -12,6 +12,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.6" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\ProductCatalog\" />
+  </ItemGroup>
   <Target Name="RunTailwind" BeforeTargets="Build">
     <Exec Command="npx tailwindcss -i wwwroot/css/app.css -o wwwroot/css/app.min.css" />
   </Target>
