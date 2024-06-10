@@ -4,16 +4,20 @@ using EccomercePage;
 using Microsoft.AspNetCore.Components.Authorization;
 using EccomercePage.Services;
 using EccomercePage.Interfaces;
+using EccomercePage.Interfaces.ProductInterfaces;
+using EccomercePage.Services.ProductServices;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddAuthorizationCore();
+builder.Services.AddTransient<CutomHttpHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped(sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
 
 // Resto de servicios
+builder.Services.AddScoped<IProduct, ProductService>();
 
 // Configura un HttpClient con un tiempo de vida "scoped"
 builder.Services.AddScoped(sp => new HttpClient
