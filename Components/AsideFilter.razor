@@ -1,0 +1,20 @@
+﻿@namespace EccomercePage.Components
+
+@* Parameters *@
+@code {
+    [Parameter] required public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Title { get; set; } = "Sin titulo";
+    [Parameter] public int NumberResults { get; set; } = 0;
+}
+
+
+<div class="dark:bg-gray-800 rounded-lg p-2 flex-1">
+    <Titles_flow Size="xs">@Title</Titles_flow>
+    <span class="text-gray-500 dark:text-gray-400">@NumberResults Resultados</span>
+    <div class="mt-4">
+        @ChildContent
+    </div>
+</div>
+
+
+
