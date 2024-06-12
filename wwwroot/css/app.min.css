@@ -1157,6 +1157,18 @@ input:checked + .toggle-bg {
   grid-column: span 6 / span 6;
 }
 
+.col-start-3 {
+  grid-column-start: 3;
+}
+
+.col-start-4 {
+  grid-column-start: 4;
+}
+
+.col-start-1 {
+  grid-column-start: 1;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -1651,6 +1663,21 @@ input:checked + .toggle-bg {
   padding-bottom: 2rem;
 }
 
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
+}
+
 .pb-5 {
   padding-bottom: 1.25rem;
 }
@@ -1713,6 +1740,11 @@ input:checked + .toggle-bg {
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
 }
 
 .font-bold {
