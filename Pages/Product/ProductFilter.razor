@@ -1,0 +1,157 @@
+﻿@page "/p"
+
+@using EccomerceApi.Model
+@using EccomercePage.Components
+@using EccomercePage.Interfaces.ProductInterfaces
+@using EccomercePage.Models
+@using EccomercePage.Models.ProductModel
+@using Microsoft.AspNetCore.WebUtilities
+
+@inject NavigationManager _navigation
+@inject IProduct _product
+@inject IProductBrand _brand
+@inject IProductCategory _category
+
+<PageTitle>Celulares</PageTitle>
+
+<div id="filter" class="max-w-full mx-auto max-w-screen-xl h-screen pt-4">
+    <aside class="[grid-area:aside] flex-col flex overflow-y-auto">
+        <AsideFilter Title="Celulares y Smartphones" NumberResults="@pagedResponse.TotalItems">
+            <section class="flex flex-col gap-4">
+                <FilterItem NameFilter="Marca" Items="@brandsItems" OnFilterSelected="HandleBrandFilterSelected"></FilterItem>
+                <FilterItem NameFilter="Categoria" Items="@categoriesItems" OnFilterSelected="HandleCategoryFilterSelected"></FilterItem>
+            </section>
+        </AsideFilter>
+    </aside>
+
+    <section class="[grid-area:section] bg-green-200 overflow-y-auto">
+        @foreach (var product in Products)
+        {
+            <ProductCard_Filter Id="@product.Id" 
+                NameProduct="@product.Name"
+                ImageUrl="@product.ImageUrl"
+                Price="@product.Price"/>
+        }      
+    </section>
+</div>
+
+<style>
+    #filter{
+        display: grid;
+        grid-template-areas:
+            "aside section section";
+        grid-template-columns: 300px 1fr;
+        grid-template-rows: 1fr auto;
+    }
+</style>
+
+@code {
+    [Parameter] public int page { get; set; } = 1;
+    [Parameter] public int pageSize { get; set; } = 10;
+    [Parameter] public string searchTerm { get; set; } = string.Empty;
+    [Parameter] public int? brandIdFilter { get; set; }
+    [Parameter] public int? categoryIdFilter { get; set; }
+
+    private List<BasicFilterModel> brandsItems = new List<BasicFilterModel>();
+    private List<BasicFilterModel> categoriesItems = new List<BasicFilterModel>();
+    private PagedResultModel<ProductCatalogViewModel> pagedResponse = new PagedResultModel<ProductCatalogViewModel>();
+    private string? model { get; set; }
+    private decimal? minimumPrice { get; set; }
+    private decimal? maximunPrice { get; set; }
+    private List<ProductCatalogViewModel> Products = new List<ProductCatalogViewModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFilters();
+        ReadUrlParameters();
+        await LoadProducts();
+    }
+
+    private async Task LoadFilters()
+    {
+        brandsItems = await _brand.GetAllAsync();
+        categoriesItems = await _category.GetAllAsync();
+    }
+
+    private void ReadUrlParameters()
+    {
+        var uri = _navigation.ToAbsoluteUri(_navigation.Uri);
+        var queryParameters = QueryHelpers.ParseQuery(uri.Query);
+
+        if (queryParameters.TryGetValue(nameof(page), out var pageValue) && int.TryParse(pageValue, out var parsedPage))
+        {
+            page = parsedPage;
+        }
+
+        if (queryParameters.TryGetValue(nameof(pageSize), out var pageSizeValue) && int.TryParse(pageSizeValue, out var parsedPageSize))
+        {
+            pageSize = parsedPageSize;
+        }
+
+        if (queryParameters.TryGetValue(nameof(searchTerm), out var searchTermValue))
+        {
+            searchTerm = searchTermValue;
+        }
+
+        if (queryParameters.TryGetValue(nameof(brandIdFilter), out var brandIdFilterValue) && int.TryParse(brandIdFilterValue, out var parsedBrandIdFilter))
+        {
+            brandIdFilter = parsedBrandIdFilter;
+        }
+
+        if (queryParameters.TryGetValue(nameof(categoryIdFilter), out var categoryIdFilterValue) && int.TryParse(categoryIdFilterValue, out var parsedCategoryIdFilter))
+        {
+            categoryIdFilter = parsedCategoryIdFilter;
+        }
+    }
+
+    private async Task LoadProducts()
+    {
+        pagedResponse = await _product.GetProductCatalogWithFiltersAsync(page, pageSize, searchTerm, brandIdFilter, categoryIdFilter, model, minimumPrice, maximunPrice);
+        Products = pagedResponse.Items;
+    }
+
+    private async Task HandleCategoryFilterSelected(int selectedCategoryId)
+    {
+        categoryIdFilter = selectedCategoryId;
+        await ApplyFilters();
+    }
+
+    private async Task HandleBrandFilterSelected(int selectedBrandId)
+    {
+        brandIdFilter = selectedBrandId;
+        await ApplyFilters();
+    }
+
+    private async Task ApplyFilters()
+    {
+        UpdateUrl();
+        await LoadProducts();
+    }
+
+    private void UpdateUrl()
+    {
+        var parameters = new Dictionary<string, string>
+        {
+            { nameof(page), page.ToString() },
+            { nameof(pageSize), pageSize.ToString() }
+        };
+
+        if (!string.IsNullOrWhiteSpace(searchTerm) && !searchTerm.Equals("all"))
+        {
+            parameters.Add(nameof(searchTerm), searchTerm);
+        }
+
+        if (brandIdFilter.HasValue)
+        {
+            parameters.Add(nameof(brandIdFilter), brandIdFilter.Value.ToString());
+        }
+
+        if (categoryIdFilter.HasValue)
+        {
+            parameters.Add(nameof(categoryIdFilter), categoryIdFilter.Value.ToString());
+        }
+
+        var queryString = QueryHelpers.AddQueryString("/p", parameters);
+        _navigation.NavigateTo(queryString);
+    }
+}

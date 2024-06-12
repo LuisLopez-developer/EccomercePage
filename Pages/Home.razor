@@ -1,10 +1,17 @@
 ﻿@page "/"
 
+@using EccomerceBlazorWasm.Constants
 @using EccomercePage.Components
 @using EccomercePage.Shareds.ProductShareds
 
 <PageTitle>Home</PageTitle>
 
-<Section>
+<Section Class="mx-auto max-w-screen-2xl">
+    <a href="@URLS.PRODUCT_LIST">
+        <img src="https://teamstarteight.work/Banner_celulares.webp" />
+    </a>
+</Section>
+
+<Section Class="py-8 mx-auto max-w-screen-xl lg:py-16">
     <ProductCarousel />
 </Section>
