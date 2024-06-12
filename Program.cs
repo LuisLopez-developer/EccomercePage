@@ -19,6 +19,7 @@ builder.Services.AddScoped(sp => (IAccountManagement)sp.GetRequiredService<Authe
 // Resto de servicios
 builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<IProductBrand, ProductBrandService>();
+builder.Services.AddScoped<IProductCategory, ProductCategoryService>();
 
 // Configura un HttpClient con un tiempo de vida "scoped"
 builder.Services.AddScoped(sp => new HttpClient
