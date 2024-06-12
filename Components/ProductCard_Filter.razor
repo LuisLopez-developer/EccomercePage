@@ -1,0 +1,25 @@
+﻿@namespace EccomercePage.Components
+
+@code {
+    [Parameter] public required string ImageUrl { get; set; }
+    [Parameter] public required string NameProduct { get; set; }
+    [Parameter] public required decimal Price { get; set; }
+    [Parameter] public int Id { get; set; }
+}
+
+<div class="border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+    <div class="space-y-4 md:gap-6 md:space-y-0 grid grid-cols-4">
+        <a href="#" class="">
+            <img class=" w-[200px] h-[150px]" src="@ImageUrl" alt="@NameProduct" />
+        </a>
+        <div class="grid grid-cols-2 col-span-3">
+            <p class="col-span-2 text-white text-lg">@NameProduct</p>
+            <span class="col-span-1 text-white text-xl font-semibold">S/.@Price</span>
+            <div class="col-start-1 col-span-1">
+                <Button_flow Size="xs" >Añadir al carrito</Button_flow>
+            </div>
+
+        </div>
+    </div>
+</div>
+
