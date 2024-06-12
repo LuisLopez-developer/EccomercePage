@@ -1,0 +1,28 @@
+﻿@namespace EccomercePage.Components
+
+@using EccomercePage.Models
+
+@code {
+    [Parameter] public required string NameFilter { get; set; }
+    [Parameter] public required List<BasicFilterModel> Items { get; set; }
+    [Parameter] public EventCallback<int> OnFilterSelected { get; set; }
+
+    private async Task HandleFilterClick(int filterId)
+    {
+        await OnFilterSelected.InvokeAsync(filterId);
+    } 
+}
+
+<div>
+    <h3 class="text-lg font-medium text-gray-500 dark:text-white">@NameFilter</h3>
+    <ul>
+        @foreach (var item in Items)
+        {
+            <li class="text-base text-gray-400 dark:text-gray-300">
+                <button @onclick="() => HandleFilterClick(item.Id)">
+                    <span>@item.Name</span>
+                </button>
+            </li>
+        }
+    </ul>
+</div>
