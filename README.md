@@ -24,18 +24,8 @@ npm install
 ```
 4. Listo, para finalizar ejecuta:
 ```bash
-dotnet watch
+dotnet watch --launch-profile https
 ```
-
-> [!important]
-> Para que los cambios **CSS** se **copilen al momento**, en una terminal ejecuta:
-> ```bash
-> npx tailwindcss -i wwwroot/css/app.css -o wwwroot/css/app.min.css --watch
-> ```
-> y en otra:
-> ```bash
-> dotnet watch
-> ```
 
 ## Creditos especiales
 A: [**Rasheed K Mozaffar**](https://github.com/rasheed-k-mozaffar/FlowbiteBlazorWasmStarter) 
