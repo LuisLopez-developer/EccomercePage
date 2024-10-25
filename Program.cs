@@ -1,12 +1,13 @@
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Blazored.LocalStorage;
 using EccomercePage;
-using Microsoft.AspNetCore.Components.Authorization;
+using EccomercePage.Api.Interfaces;
+using EccomercePage.Api.Interfaces.ProductInterfaces;
+using EccomercePage.Api.Services;
 using EccomercePage.Api.Services.AccountService;
 using EccomercePage.Api.Services.ProductServices;
-using EccomercePage.Api.Interfaces.AccountInterface;
-using EccomercePage.Api.Interfaces.ProductInterfaces;
-using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -17,8 +18,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Configurar servicios de autorización y autenticación
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddTransient<CustomHttpHandler>();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-builder.Services.AddScoped(sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
+builder.Services.AddScoped<AuthenticationStateProvider, AuthService>();
+builder.Services.AddScoped(sp => (IAuthService)sp.GetRequiredService<AuthenticationStateProvider>());
 
 // Resto de servicios
 builder.Services.AddScoped<IProduct, ProductService>();

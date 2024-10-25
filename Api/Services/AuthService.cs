@@ -1,6 +1,7 @@
 ﻿using Blazored.LocalStorage;
-using EccomercePage.Api.Interfaces.AccountInterface;
+using EccomercePage.Api.Interfaces;
 using EccomercePage.Api.Models;
+using EccomercePage.Data.DTO;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Data;
 using System.Net.Http.Headers;
@@ -9,9 +10,9 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
-namespace EccomercePage.Api.Services.AccountService
+namespace EccomercePage.Api.Services
 {
-    public class CustomAuthenticationStateProvider : AuthenticationStateProvider, IAccountManagement
+    public class AuthService : AuthenticationStateProvider, IAuthService
     {
 
         private bool _authenticated = false;
@@ -29,7 +30,7 @@ namespace EccomercePage.Api.Services.AccountService
 
         private readonly ILocalStorageService _localStorageService;
 
-        public CustomAuthenticationStateProvider(IHttpClientFactory httpClientFactory,
+        public AuthService(IHttpClientFactory httpClientFactory,
             ILocalStorageService localStorageService)
         {
             _httpClient = httpClientFactory.CreateClient("Auth");
@@ -88,7 +89,7 @@ namespace EccomercePage.Api.Services.AccountService
                         }
                     }
 
-                    var id = new ClaimsIdentity(claims, nameof(CustomAuthenticationStateProvider));
+                    var id = new ClaimsIdentity(claims, nameof(AuthService));
                     user = new ClaimsPrincipal(id);
                     _authenticated = true;
                 }
@@ -189,6 +190,46 @@ namespace EccomercePage.Api.Services.AccountService
         {
             await GetAuthenticationStateAsync();
             return _authenticated;
+        }
+
+        public Task<ApiResponse> RegisterAsync(RegisterDTO registerDTO)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ApiResponse> LoginAsync(LoginDTO loginDTO)
+        {
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync(
+                    "login", new
+                    {
+                        loginDTO.Email,
+                        loginDTO.Password
+                    });
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var tokenResponse = await result.Content.ReadAsStringAsync();
+
+                    var tokenInfo = JsonSerializer.Deserialize<TokenInfo>(tokenResponse, jsonSerializerOptions);
+
+                    await _localStorageService.SetItemAsync("accessToken", tokenInfo?.AccessToken);
+
+                    NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+                    return new ApiResponse { Success = true };
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return new ApiResponse
+            {
+                Success = false,
+                Message = "Usuario inválido y/o contraseña."
+            };
         }
     }
 }
