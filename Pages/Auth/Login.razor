@@ -1,0 +1,81 @@
+﻿@layout AuthLayout
+@page "/login"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using EccomercePage.Api.Interfaces
+@using EccomercePage.Data.DTO
+@using EccomercePage.Data.Validations
+@using EccomercePage.Routes.Redirects
+@using FluentValidation
+@using FluentValidation.Results
+
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
+@inject IValidator<LoginDTO> LoginValidator
+
+<AuthorizeView>
+    <Authorized>
+        <RedirectToHome />
+    </Authorized>
+    <NotAuthorized>
+        <h3>Formulario para iniciar sesión</h3>
+
+        <!-- Formulario de inicio de sesión -->
+        <EditForm Model="@LoginDTO" OnValidSubmit="HandleValidSubmit" Context="editFormContext">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div>
+                <label for="userName">Nombre de usuario</label>
+                <InputText id="userName" @bind-Value="LoginDTO.UserNameOrEmail" />
+            </div>
+            <div>
+                <label for="password">Contraseña</label>
+                <InputText id="password" type="password" @bind-Value="LoginDTO.Password" />
+            </div>
+            <button type="submit">Iniciar sesión</button>
+        </EditForm>
+
+        <!-- Mostrar errores de validación -->
+        @if (validationErrors != null && validationErrors.Count > 0)
+        {
+            <ul>
+                @foreach (var error in validationErrors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private LoginDTO LoginDTO = new LoginDTO();
+    private List<ValidationFailure> validationErrors = [];
+
+    private async Task HandleValidSubmit()
+    {
+        var validationResult = LoginValidator.Validate(LoginDTO);
+
+        if (validationResult.IsValid)
+        {
+            var result = await AuthService.LoginAsync(LoginDTO);
+
+            if (result.Success)
+            {
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                validationErrors = new List<ValidationFailure>
+                {
+                    new ValidationFailure("", "Usuario o contraseña incorrectos")
+                };
+            }
+        }
+        else
+        {
+            validationErrors = validationResult.Errors;
+        }
+    }
+}

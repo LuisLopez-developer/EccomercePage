@@ -7,9 +7,9 @@ namespace EccomercePage.Data.Validations
     {
         public LoginValidator()
         {
-            RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Correo electrónico es requerido.")
-                .EmailAddress().WithMessage("Correo electrónico no es válido.");
+            //Va ldar si es un email o un nombre de usuario
+            RuleFor(x => x.UserNameOrEmail)
+                .NotEmpty().WithMessage("Nombre de usuario o email es requerido.");
 
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Contraseña es requerida.");

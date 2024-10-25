@@ -171,9 +171,9 @@ namespace EccomercePage.Api.Services
             try
             {
                 var result = await _httpClient.PostAsJsonAsync(
-                    "login", new
+                    "/api/eccomerce/Account/login", new
                     {
-                        loginDTO.Email,
+                        loginDTO.UserNameOrEmail,
                         loginDTO.Password
                     });
 
