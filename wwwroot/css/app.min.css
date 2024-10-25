@@ -2070,10 +2070,6 @@ h1:focus {
     margin-top: 0.5rem;
   }
 
-  .lg\:block {
-    display: block;
-  }
-
   .lg\:flex {
     display: flex;
   }
