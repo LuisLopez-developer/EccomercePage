@@ -1,8 +1,9 @@
-﻿using EccomercePage.Api.Interfaces.AccountInterface;
+﻿using Blazored.LocalStorage;
+using EccomercePage.Api.Interfaces.AccountInterface;
 using EccomercePage.Api.Models;
-using EccomercePage.Api.Models.UserModel;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Data;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
@@ -12,6 +13,7 @@ namespace EccomercePage.Api.Services.AccountService
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider, IAccountManagement
     {
+
         private bool _authenticated = false;
 
         private readonly ClaimsPrincipal Unauthenticated =
@@ -25,47 +27,60 @@ namespace EccomercePage.Api.Services.AccountService
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
-        public CustomAuthenticationStateProvider(IHttpClientFactory httpClientFactory)
+        private readonly ILocalStorageService _localStorageService;
+
+        public CustomAuthenticationStateProvider(IHttpClientFactory httpClientFactory,
+            ILocalStorageService localStorageService)
         {
             _httpClient = httpClientFactory.CreateClient("Auth");
+            _localStorageService = localStorageService;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            _authenticated = false;
+            if (_authenticated)
+            {
+                // Si ya está autenticado, no realizar nuevamente la llamada a /manage/info
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())); // devolver el estado actual
+            }
 
-            // default to not authenticated
+            _authenticated = false;
             var user = Unauthenticated;
 
             try
             {
-                var userResponse = await _httpClient.GetAsync("manage/info");
+                var accessToken = await _localStorageService.GetItemAsync<string>("accessToken");
+                if (string.IsNullOrWhiteSpace(accessToken))
+                {
+                    return new AuthenticationState(user);
+                }
 
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var userResponse = await _httpClient.GetAsync("manage/info");
                 userResponse.EnsureSuccessStatusCode();
 
                 var userJson = await userResponse.Content.ReadAsStringAsync();
-                var userInfo = JsonSerializer.Deserialize<UserInfoModel>(userJson, jsonSerializerOptions);
+                var userInfo = JsonSerializer.Deserialize<UserInfo>(userJson, jsonSerializerOptions);
 
                 if (userInfo != null)
                 {
                     var claims = new List<Claim>
-                    {
-                        new(ClaimTypes.Name, userInfo.Email),
-                        new(ClaimTypes.Email, userInfo.Email)
-                    };
+            {
+                new(ClaimTypes.Name, userInfo.Email),
+                new(ClaimTypes.Email, userInfo.Email)
+            };
 
                     claims.AddRange(
                       userInfo.Claims.Where(c => c.Key != ClaimTypes.Name && c.Key != ClaimTypes.Email)
-                          .Select(c => new Claim(c.Key, c.Value)));
+                    .Select(c => new Claim(c.Key, c.Value)));
 
                     var rolesResponse = await _httpClient.GetAsync($"api/Role/GetuserRole?userEmail={userInfo.Email}");
-
                     rolesResponse.EnsureSuccessStatusCode();
-
                     var rolesJson = await rolesResponse.Content.ReadAsStringAsync();
 
                     var roles = JsonSerializer.Deserialize<string[]>(rolesJson, jsonSerializerOptions);
-                    if (roles != null && roles?.Length > 0)
+                    if (roles != null && roles.Length > 0)
                     {
                         foreach (var role in roles)
                         {
@@ -74,21 +89,16 @@ namespace EccomercePage.Api.Services.AccountService
                     }
 
                     var id = new ClaimsIdentity(claims, nameof(CustomAuthenticationStateProvider));
-
                     user = new ClaimsPrincipal(id);
-
                     _authenticated = true;
-
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
-
+                // Manejar la excepción según sea necesario
             }
 
             return new AuthenticationState(user);
-
         }
 
         public async Task<FormResultModel> RegisterAsync(string email, string password)
