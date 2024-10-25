@@ -1,10 +1,11 @@
 ﻿@page "/p"
 
-@using EccomerceApi.Model
+
+@using EccomercePage.Api.Interfaces.ProductInterfaces
+@using EccomercePage.Api.Models
+@using EccomercePage.Api.Models.ProductModel
 @using EccomercePage.Components
-@using EccomercePage.Interfaces.ProductInterfaces
-@using EccomercePage.Models
-@using EccomercePage.Models.ProductModel
+
 @using Microsoft.AspNetCore.WebUtilities
 
 @inject NavigationManager _navigation
@@ -14,8 +15,8 @@
 
 <PageTitle>Celulares</PageTitle>
 
-<div id="filter" class="max-w-full mx-auto max-w-screen-xl h-screen pt-4">
-    <aside class="[grid-area:aside] flex-col flex overflow-y-auto">
+<div id="filter" class="mx-auto h-screen max-w-full max-w-screen-xl pt-4">
+    <aside class="flex flex-col overflow-y-auto [grid-area:aside]">
         <AsideFilter Title="Celulares y Smartphones" NumberResults="@pagedResponse.TotalItems">
             <section class="flex flex-col gap-4">
                 <FilterItem NameFilter="Marca" Items="@brandsItems" OnFilterSelected="HandleBrandFilterSelected"></FilterItem>
@@ -24,19 +25,19 @@
         </AsideFilter>
     </aside>
 
-    <section class="[grid-area:section] bg-green-200 overflow-y-auto">
+    <section class="overflow-y-auto bg-green-200 [grid-area:section]">
         @foreach (var product in Products)
         {
-            <ProductCard_Filter Id="@product.Id" 
-                NameProduct="@product.Name"
-                ImageUrl="@product.ImageUrl"
-                Price="@product.Price"/>
-        }      
+            <ProductCard_Filter Id="@product.Id"
+                                NameProduct="@product.Name"
+                                ImageUrl="@product.ImageUrl"
+                                Price="@product.Price" />
+        }
     </section>
 </div>
 
 <style>
-    #filter{
+    #filter {
         display: grid;
         grid-template-areas:
             "aside section section";

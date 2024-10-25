@@ -1,4 +1,4 @@
-﻿namespace EccomercePage.Models.ProductModel
+﻿namespace EccomercePage.Api.Models.ProductModel
 {
     public class ProductCatalogViewModel
     {

@@ -1,4 +1,4 @@
-﻿namespace EccomercePage.Models
+﻿namespace EccomercePage.Api.Models
 {
     public class FormResultModel
     {

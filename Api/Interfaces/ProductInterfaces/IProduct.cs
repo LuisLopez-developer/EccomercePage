@@ -1,8 +1,7 @@
-﻿using EccomercePage.Models.ProductModel;
-using EccomercePage.Models;
-using EccomerceApi.Model;
+﻿using EccomercePage.Api.Models;
+using EccomercePage.Api.Models.ProductModel;
 
-namespace EccomercePage.Interfaces.ProductInterfaces
+namespace EccomercePage.Api.Interfaces.ProductInterfaces
 {
     public interface IProduct
     {

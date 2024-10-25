@@ -1,10 +1,10 @@
-﻿using EccomerceApi.Model;
-using EccomercePage.Interfaces.ProductInterfaces;
-using EccomercePage.Models.ProductModel;
+﻿using EccomercePage.Api.Interfaces.ProductInterfaces;
+using EccomercePage.Api.Models;
+using EccomercePage.Api.Models.ProductModel;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace EccomercePage.Services.ProductServices
+namespace EccomercePage.Api.Services.ProductServices
 {
     public class ProductService : IProduct
     {

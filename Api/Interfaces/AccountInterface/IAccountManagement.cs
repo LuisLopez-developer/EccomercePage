@@ -1,6 +1,6 @@
-﻿using EccomercePage.Models;
+﻿using EccomercePage.Api.Models;
 
-namespace EccomercePage.Interfaces
+namespace EccomercePage.Api.Interfaces.AccountInterface
 {
     public interface IAccountManagement
     {

@@ -1,8 +1,8 @@
-﻿using EccomercePage.Interfaces.ProductInterfaces;
-using EccomercePage.Models;
+﻿using EccomercePage.Api.Interfaces.ProductInterfaces;
+using EccomercePage.Api.Models;
 using System.Net.Http.Json;
 
-namespace EccomercePage.Services.ProductServices
+namespace EccomercePage.Api.Services.ProductServices
 {
     public class ProductCategoryService : IProductCategory
     {
@@ -16,7 +16,7 @@ namespace EccomercePage.Services.ProductServices
         public async Task<List<BasicFilterModel>> GetAllAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<List<BasicFilterModel>>($"{api}/GetAllPublic");
-            return response ?? new List<BasicFilterModel>(); 
+            return response ?? new List<BasicFilterModel>();
         }
     }
 }

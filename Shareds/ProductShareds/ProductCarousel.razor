@@ -1,12 +1,12 @@
-﻿@using EccomercePage.Components
-@using EccomercePage.Interfaces.ProductInterfaces
-@using EccomercePage.Models.ProductModel
+﻿@using EccomercePage.Api.Interfaces.ProductInterfaces
+@using EccomercePage.Api.Models.ProductModel
+@using EccomercePage.Components
 @using Microsoft.JSInterop
 
 @inject IJSRuntime js
 @inject IProduct _product
 
-<div id="indicators-carousel" class="relative w-full group" data-carousel="static">
+<div id="indicators-carousel" class="group relative w-full" data-carousel="static">
     <!-- Carousel wrapper -->
     <div class="relative overflow-hidden rounded-lg bg-transparent">
         <div class="flex transition-transform duration-700 ease-in-out" data-carousel-inner>
@@ -14,10 +14,10 @@
             <div class="flex gap-[14px]">
                 @foreach (var product in Products)
                 {
-                    <ProductCard Class="w-[244.8px] h-84" ImageSrc="@product.ImageUrl"
-                                    ImageAlt="@product.Name"
-                                    Name="@product.Name"
-                                    Price="@product.Price" />
+                    <ProductCard Class="h-84 w-[244.8px]" ImageSrc="@product.ImageUrl"
+                                 ImageAlt="@product.Name"
+                                 Name="@product.Name"
+                                 Price="@product.Price" />
                 }
             </div>
         </div>
@@ -25,9 +25,9 @@
     <!-- Slider controls -->
     @if (isVisiblePrevious)
     {
-        <button type="button" class="absolute top-1/2 right-full transform translate-x-1/2 -translate-y-1/2 z-30 flex items-center justify-center h-14 w-14 cursor-pointer group-hover:flex hidden focus:outline-none" @onclick="PreviousSlide">
-            <span class="inline-flex items-center justify-center w-full h-full rounded-full bg-white/30 group-hover:bg-gray-700/90 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
-                <svg class="w-4 h-4 text-blue-700 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+        <button type="button" class="-translate-y-1/2 group-hover:flex absolute right-full top-1/2 z-30 flex hidden h-14 w-14 translate-x-1/2 transform cursor-pointer items-center justify-center focus:outline-none" @onclick="PreviousSlide">
+            <span class="bg-white/30 group-hover:bg-gray-700/90 group-focus:ring-4 group-focus:ring-white group-focus:outline-none inline-flex h-full w-full items-center justify-center rounded-full">
+                <svg class="h-4 w-4 text-blue-700 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4" />
                 </svg>
                 <span class="sr-only">Previous</span>
@@ -36,15 +36,15 @@
     }
     @if (isVisibleNext)
     {
-        <button type="button" class="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 z-30 flex items-center justify-center cursor-pointer group-hover:flex hidden focus:outline-none" @onclick="NextSlide">
-            <span class="inline-flex items-center justify-center h-14 w-14 rounded-full bg-white/30 group-hover:bg-gray-700/90 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
-                <svg class="w-4 h-4 text-blue-700 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+        <button type="button" class="-translate-y-1/2 group-hover:flex absolute right-0 top-1/2 z-30 flex hidden translate-x-1/2 transform cursor-pointer items-center justify-center focus:outline-none" @onclick="NextSlide">
+            <span class="bg-white/30 group-hover:bg-gray-700/90 group-focus:ring-4 group-focus:ring-white group-focus:outline-none inline-flex h-14 w-14 items-center justify-center rounded-full">
+                <svg class="h-4 w-4 text-blue-700 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
                 </svg>
                 <span class="sr-only">Next</span>
             </span>
         </button>
-    }  
+    }
 </div>
 
 <script>

@@ -1,6 +1,6 @@
-﻿using EccomercePage.Models;
+﻿using EccomercePage.Api.Models;
 
-namespace EccomercePage.Interfaces.ProductInterfaces
+namespace EccomercePage.Api.Interfaces.ProductInterfaces
 {
     public interface IProductBrand
     {

@@ -1,5 +1,6 @@
-﻿using EccomercePage.Interfaces;
-using EccomercePage.Models;
+﻿using EccomercePage.Api.Interfaces.AccountInterface;
+using EccomercePage.Api.Models;
+using EccomercePage.Api.Models.UserModel;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Data;
 using System.Net.Http.Json;
@@ -7,7 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
-namespace EccomercePage.Services
+namespace EccomercePage.Api.Services.AccountService
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider, IAccountManagement
     {

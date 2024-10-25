@@ -2,15 +2,16 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using EccomercePage;
 using Microsoft.AspNetCore.Components.Authorization;
-using EccomercePage.Services;
-using EccomercePage.Interfaces;
-using EccomercePage.Interfaces.ProductInterfaces;
-using EccomercePage.Services.ProductServices;
+using EccomercePage.Api.Services.AccountService;
+using EccomercePage.Api.Services.ProductServices;
+using EccomercePage.Api.Interfaces.AccountInterface;
+using EccomercePage.Api.Interfaces.ProductInterfaces;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+// 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddTransient<CutomHttpHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();

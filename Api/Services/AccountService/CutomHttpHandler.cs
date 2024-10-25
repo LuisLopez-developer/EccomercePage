@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
-namespace EccomercePage.Services
+namespace EccomercePage.Api.Services.AccountService
 {
     public class CutomHttpHandler : DelegatingHandler
     {
@@ -10,5 +10,5 @@ namespace EccomercePage.Services
             request.Headers.Add("X-Requested-With", ["XMLHttpRequest"]);
             return base.SendAsync(request, cancellationToken);
         }
-    }  
+    }
 }

@@ -10,20 +10,20 @@
 
 }
 
-<div class="@Class bg-white/30  border-transparent rounded-lg shadow dark:bg-gray-800/30">
+<div class="@Class bg-white/30 rounded-lg border-transparent shadow dark:bg-gray-800/30">
     <!-- Cambiado a fondo semi-transparente -->
     <a href="#">
-        <img class="p-8 rounded-t-lg" src="@ImageSrc" alt="@ImageAlt" />
+        <img class="rounded-t-lg p-8" src="@ImageSrc" alt="@ImageAlt" />
     </a>
     <div class="px-5 pb-5">
         <p class="text-xl font-bold text-gray-900 dark:text-white">S/@Price.ToString()</p>
 
         <a href="#">
-            <h5 class="my-2 text-sm font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-2">@Name</h5>
+            <h5 class="line-clamp-2 my-2 text-sm font-semibold tracking-tight text-gray-900 dark:text-white">@Name</h5>
         </a>
 
-        <div class="flex justify-center items-center">
-            <a href="#" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Añadir al carrito</a>
+        <div class="flex items-center justify-center">
+            <a href="#" class="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Añadir al carrito</a>
         </div>
     </div>
 </div>

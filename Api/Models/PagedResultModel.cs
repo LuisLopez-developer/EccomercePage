@@ -1,4 +1,4 @@
-﻿namespace EccomerceApi.Model
+﻿namespace EccomercePage.Api.Models
 {
     public class PagedResultModel<T>
     {
