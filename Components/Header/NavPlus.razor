@@ -1,0 +1,16 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+<nav class="flex flex-row items-center gap-x-4">
+    <AuthorizeView>
+        <Authorized>
+
+            <a href="/profile">Perfil</a>
+            <a href="/logout">Cerrar sesi�n</a>
+            <img src="/css/cart.svg" alt="Carrito de compras" />
+
+        </Authorized>
+        <NotAuthorized>
+            <a href="/login">Iniciar sesi�n</a>
+            <a href="/signup">Registrarse</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</nav>
