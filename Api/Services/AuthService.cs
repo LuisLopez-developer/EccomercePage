@@ -14,24 +14,13 @@ namespace EccomercePage.Api.Services
 {
     public class AuthService : AuthenticationStateProvider, IAuthService
     {
-
         private bool _authenticated = false;
-
-        private readonly ClaimsPrincipal Unauthenticated =
-           new(new ClaimsIdentity());
-
+        private readonly ClaimsPrincipal Unauthenticated = new(new ClaimsIdentity());
         private readonly HttpClient _httpClient;
-
-        private readonly JsonSerializerOptions jsonSerializerOptions =
-        new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
-
+        private readonly JsonSerializerOptions jsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         private readonly ILocalStorageService _localStorageService;
 
-        public AuthService(IHttpClientFactory httpClientFactory,
-            ILocalStorageService localStorageService)
+        public AuthService(IHttpClientFactory httpClientFactory, ILocalStorageService localStorageService)
         {
             _httpClient = httpClientFactory.CreateClient("Auth");
             _localStorageService = localStorageService;
@@ -40,76 +29,48 @@ namespace EccomercePage.Api.Services
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             if (_authenticated)
-            {
-                // Si ya está autenticado, no realizar nuevamente la llamada a /manage/info
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())); // devolver el estado actual
-            }
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
-            _authenticated = false;
             var user = Unauthenticated;
-
             try
             {
                 var accessToken = await _localStorageService.GetItemAsync<string>("accessToken");
                 if (string.IsNullOrWhiteSpace(accessToken))
-                {
                     return new AuthenticationState(user);
-                }
 
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
                 var userResponse = await _httpClient.GetAsync("manage/info");
-                userResponse.EnsureSuccessStatusCode();
+                if (!userResponse.IsSuccessStatusCode) return new AuthenticationState(user);
 
-                var userJson = await userResponse.Content.ReadAsStringAsync();
-                var userInfo = JsonSerializer.Deserialize<UserInfo>(userJson, jsonSerializerOptions);
+                var userInfo = JsonSerializer.Deserialize<UserInfo>(
+                    await userResponse.Content.ReadAsStringAsync(), jsonSerializerOptions);
 
                 if (userInfo != null)
                 {
-                    var claims = new List<Claim>
-            {
-                new(ClaimTypes.Name, userInfo.Email),
-                new(ClaimTypes.Email, userInfo.Email)
-            };
+                    var claims = userInfo.Claims
+                        .Select(c => new Claim(c.Key, c.Value))
+                        .ToList();
 
-                    claims.AddRange(
-                      userInfo.Claims.Where(c => c.Key != ClaimTypes.Name && c.Key != ClaimTypes.Email)
-                    .Select(c => new Claim(c.Key, c.Value)));
+                    claims.Add(new Claim(ClaimTypes.PrimarySid, userInfo.Id));
+                    claims.Add(new Claim(ClaimTypes.Name, userInfo.UserName));
+                    claims.Add(new Claim(ClaimTypes.Email, userInfo.Email));
+                    
+                    userInfo.Roles?.ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
 
-                    var rolesResponse = await _httpClient.GetAsync($"api/Role/GetuserRole?userEmail={userInfo.Email}");
-                    rolesResponse.EnsureSuccessStatusCode();
-                    var rolesJson = await rolesResponse.Content.ReadAsStringAsync();
-
-                    var roles = JsonSerializer.Deserialize<string[]>(rolesJson, jsonSerializerOptions);
-                    if (roles != null && roles.Length > 0)
-                    {
-                        foreach (var role in roles)
-                        {
-                            claims.Add(new(ClaimTypes.Role, role));
-                        }
-                    }
-
-                    var id = new ClaimsIdentity(claims, nameof(AuthService));
-                    user = new ClaimsPrincipal(id);
+                    user = new ClaimsPrincipal(new ClaimsIdentity(claims, nameof(AuthService)));
                     _authenticated = true;
                 }
             }
-            catch (Exception)
-            {
-                // Manejar la excepción según sea necesario
-            }
+            catch { }
 
             return new AuthenticationState(user);
         }
 
         public async Task LogoutAsync()
         {
-            const string Empty = "{}";
-            var emptyContent = new StringContent(Empty, Encoding.UTF8, "application/json");
-
-            await _httpClient.PostAsync("api/user/Logout", emptyContent);
+            await _httpClient.PostAsync("api/user/Logout", new StringContent("{}", Encoding.UTF8, "application/json"));
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-
         }
 
         public async Task<bool> CheckAuthenticatedAsync()
@@ -120,48 +81,22 @@ namespace EccomercePage.Api.Services
 
         public async Task<ApiResponse> RegisterAsync(RegisterDTO registerDTO)
         {
-            string[] defaultDetail = ["Un error desconocido impidió que el registro se realizara correctamente."];
-
             try
             {
-                var result = await _httpClient.PostAsJsonAsync("/api/eccomerce/Account/register",
-                   new { registerDTO.UserName, registerDTO.Email, registerDTO.Password });
-                if (result.IsSuccessStatusCode)
-                {
+                var response = await _httpClient.PostAsJsonAsync("/api/eccomerce/Account/register",
+                    new { registerDTO.UserName, registerDTO.Email, registerDTO.Password });
+                if (response.IsSuccessStatusCode)
                     return new ApiResponse { Success = true };
-                }
-                var details = await result.Content.ReadAsStringAsync();
-                var problemDetails = JsonDocument.Parse(details);
 
-                var errors = new List<string>();
-                var errorList = problemDetails.RootElement.GetProperty("errors");
-
-                foreach (var errorEntry in errorList.EnumerateObject())
-                {
-                    if (errorEntry.Value.ValueKind == JsonValueKind.String)
-                    {
-                        errors.Add(errorEntry.Value.GetString()!);
-                    }
-                    else if (errorEntry.Value.ValueKind == JsonValueKind.Array)
-                    {
-                        errors.AddRange(
-                            errorEntry.Value.EnumerateArray().Select(
-                                e => e.GetString() ?? string.Empty)
-                            .Where(e => !string.IsNullOrEmpty(e)));
-                    }
-                }
-                return new ApiResponse
-                {
-                    Success = false,
-                    Errors = problemDetails == null ? defaultDetail : [.. errors]
-                };
+                var errorResponse = await ParseErrorResponseAsync(response);
+                return new ApiResponse { Success = false, Errors = errorResponse.Errors };
             }
-            catch (Exception)
+            catch
             {
                 return new ApiResponse
                 {
                     Success = false,
-                    Errors = [.. defaultDetail]
+                    Errors = new[] { "Un error desconocido impidió que el registro se realizara correctamente." }
                 };
             }
         }
@@ -170,35 +105,43 @@ namespace EccomercePage.Api.Services
         {
             try
             {
-                var result = await _httpClient.PostAsJsonAsync(
-                    "/api/eccomerce/Account/login", new
-                    {
-                        loginDTO.UserNameOrEmail,
-                        loginDTO.Password
-                    });
+                var response = await _httpClient.PostAsJsonAsync("/api/eccomerce/Account/login", new { loginDTO.UserNameOrEmail, loginDTO.Password });
 
-                if (result.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
-                    var tokenResponse = await result.Content.ReadAsStringAsync();
+                    var tokenInfo = JsonSerializer.Deserialize<TokenInfo>(
+                        await response.Content.ReadAsStringAsync(), jsonSerializerOptions);
 
-                    var tokenInfo = JsonSerializer.Deserialize<TokenInfo>(tokenResponse, jsonSerializerOptions);
-
-                    await _localStorageService.SetItemAsync("accessToken", tokenInfo?.AccessToken);
-
-                    NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-                    return new ApiResponse { Success = true };
+                    if (tokenInfo != null)
+                    {
+                        await _localStorageService.SetItemAsync("accessToken", tokenInfo.AccessToken);
+                        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+                        return new ApiResponse { Success = true };
+                    }
                 }
             }
-            catch (Exception)
-            {
-
-            }
+            catch { }
 
             return new ApiResponse
             {
                 Success = false,
                 Message = "Usuario inválido y/o contraseña."
             };
+        }
+
+        private async Task<ApiResponse> ParseErrorResponseAsync(HttpResponseMessage response)
+        {
+            var details = await response.Content.ReadAsStringAsync();
+            var errors = JsonDocument.Parse(details)
+                .RootElement.GetProperty("errors")
+                .EnumerateObject()
+                .SelectMany(error => error.Value.ValueKind == JsonValueKind.String
+                    ? new[] { error.Value.GetString() }
+                    : error.Value.EnumerateArray().Select(e => e.GetString()))
+                .Where(e => !string.IsNullOrWhiteSpace(e))
+                .ToArray();
+
+            return new ApiResponse { Errors = errors };
         }
     }
 }
