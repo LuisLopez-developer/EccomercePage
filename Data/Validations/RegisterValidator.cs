@@ -17,6 +17,9 @@ namespace EccomercePage.Data.Validations
                 .NotEmpty().WithMessage("Contraseña es requerida.")
                 .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$")
                 .WithMessage("La contraseña debe tener al menos una mayúscula, un número y un carácter especial.");
+
+            RuleFor(x => x.ConfirmPassword)
+                .Equal(x => x.Password).WithMessage("Las contraseñas no coinciden.");
         }
     }
 }

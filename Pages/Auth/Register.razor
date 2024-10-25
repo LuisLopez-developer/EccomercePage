@@ -1,0 +1,92 @@
+﻿@layout AuthLayout
+@page "/signup"
+
+@using EccomercePage.Api.Interfaces
+@using EccomercePage.Data.DTO
+@using EccomercePage.Data.Validations
+@using EccomercePage.Routes.Redirects
+@using FluentValidation
+@using FluentValidation.Results
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
+@inject IValidator<RegisterDTO> RegisterValidator
+
+<AuthorizeView>
+    <Authorized>
+        <RedirectToHome />
+    </Authorized>
+    <NotAuthorized>
+
+        <h3>Formulario para registrarse</h3>
+
+        <!-- Formulario de registro -->
+        <EditForm Model="@registerDTO" OnValidSubmit="HandleValidSubmit" Context="editFormContext">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div>
+                <label for="name">Nombre</label>
+                <InputText id="name" @bind-Value="registerDTO.UserName" />
+            </div>
+            <div>
+                <label for="email">Correo electrónico</label>
+                <InputText id="email" @bind-Value="registerDTO.Email" />
+            </div>
+            <div>
+                <label for="password">Contraseña</label>
+                <InputText id="password" type="password" @bind-Value="registerDTO.Password" />
+            </div>
+            <div>
+                <label for="confirmPassword">Confirmar contraseña</label>
+                <InputText id="confirmPassword" type="password" @bind-Value="registerDTO.ConfirmPassword" />
+            </div>
+            <button type="submit">Registrarse</button>
+        </EditForm>
+
+        <!-- Mostrar errores de validación -->
+        @if (validationErrors != null && validationErrors.Count > 0)
+        {
+            <ul>
+                @foreach (var error in validationErrors)
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private RegisterDTO registerDTO = new RegisterDTO();
+    private List<ValidationFailure> validationErrors = [];
+
+    private async Task HandleValidSubmit()
+    {
+        validationErrors = new List<ValidationFailure>();
+
+        var validationResult = await RegisterValidator.ValidateAsync(registerDTO);
+        if (validationResult.IsValid)
+        {
+            var response = await AuthService.RegisterAsync(registerDTO);
+            if (response.Success)
+            {
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                // Manejar errores de registro
+                foreach (var error in response.Errors)
+                {
+                    // Mostrar errores en la interfaz de usuario
+                    validationErrors.Add(new ValidationFailure("", error));
+                }
+            }
+        }
+        else
+        {
+            validationErrors = validationResult.Errors;
+        }
+    }
+}

@@ -5,6 +5,8 @@ using EccomercePage.Api.Interfaces.ProductInterfaces;
 using EccomercePage.Api.Services;
 using EccomercePage.Api.Services.AccountService;
 using EccomercePage.Api.Services.ProductServices;
+using EccomercePage.Data.Validations;
+using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -25,6 +27,9 @@ builder.Services.AddScoped(sp => (IAuthService)sp.GetRequiredService<Authenticat
 builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<IProductBrand, ProductBrandService>();
 builder.Services.AddScoped<IProductCategory, ProductCategoryService>();
+
+// Registrar validadores
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterValidator>();
 
 // Configura un HttpClient con un tiempo de vida "scoped"
 builder.Services.AddScoped(sp => new HttpClient

@@ -94,86 +94,12 @@ namespace EccomercePage.Api.Services
                     _authenticated = true;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Manejar la excepción según sea necesario
             }
 
             return new AuthenticationState(user);
-        }
-
-        public async Task<FormResultModel> RegisterAsync(string email, string password)
-        {
-            string[] defaultDetail = ["An unknown error prevented registration from succeeding."];
-
-            try
-            {
-
-                var result = await _httpClient.PostAsJsonAsync("register",
-                      new { email, password });
-                if (result.IsSuccessStatusCode)
-                {
-                    return new FormResultModel { Succeeded = true };
-                }
-
-                var details = await result.Content.ReadAsStringAsync();
-                var problemDetails = JsonDocument.Parse(details);
-                var errors = new List<string>();
-                var errorList = problemDetails.RootElement.GetProperty("errors");
-
-                foreach (var errorEntry in errorList.EnumerateObject())
-                {
-                    if (errorEntry.Value.ValueKind == JsonValueKind.String)
-                    {
-                        errors.Add(errorEntry.Value.GetString()!);
-                    }
-                    else if (errorEntry.Value.ValueKind == JsonValueKind.Array)
-                    {
-                        errors.AddRange(
-                            errorEntry.Value.EnumerateArray().Select(
-                                e => e.GetString() ?? string.Empty)
-                            .Where(e => !string.IsNullOrEmpty(e)));
-                    }
-                }
-                return new FormResultModel
-                {
-                    Succeeded = false,
-                    ErrorList = problemDetails == null ? defaultDetail : [.. errors]
-                };
-
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        public async Task<FormResultModel> LoginAsync(string email, string password)
-        {
-            try
-            {
-                var result = await _httpClient.PostAsJsonAsync(
-                    "login?useCookies=true", new
-                    {
-                        email,
-                        password
-                    });
-
-                if (result.IsSuccessStatusCode)
-                {
-                    NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-                    return new FormResultModel { Succeeded = true };
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            return new FormResultModel
-            {
-                Succeeded = false,
-                ErrorList = ["Invalid email and/or password."]
-            };
         }
 
         public async Task LogoutAsync()
@@ -192,9 +118,52 @@ namespace EccomercePage.Api.Services
             return _authenticated;
         }
 
-        public Task<ApiResponse> RegisterAsync(RegisterDTO registerDTO)
+        public async Task<ApiResponse> RegisterAsync(RegisterDTO registerDTO)
         {
-            throw new NotImplementedException();
+            string[] defaultDetail = ["Un error desconocido impidió que el registro se realizara correctamente."];
+
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync("/api/eccomerce/Account/register",
+                   new { registerDTO.UserName, registerDTO.Email, registerDTO.Password });
+                if (result.IsSuccessStatusCode)
+                {
+                    return new ApiResponse { Success = true };
+                }
+                var details = await result.Content.ReadAsStringAsync();
+                var problemDetails = JsonDocument.Parse(details);
+
+                var errors = new List<string>();
+                var errorList = problemDetails.RootElement.GetProperty("errors");
+
+                foreach (var errorEntry in errorList.EnumerateObject())
+                {
+                    if (errorEntry.Value.ValueKind == JsonValueKind.String)
+                    {
+                        errors.Add(errorEntry.Value.GetString()!);
+                    }
+                    else if (errorEntry.Value.ValueKind == JsonValueKind.Array)
+                    {
+                        errors.AddRange(
+                            errorEntry.Value.EnumerateArray().Select(
+                                e => e.GetString() ?? string.Empty)
+                            .Where(e => !string.IsNullOrEmpty(e)));
+                    }
+                }
+                return new ApiResponse
+                {
+                    Success = false,
+                    Errors = problemDetails == null ? defaultDetail : [.. errors]
+                };
+            }
+            catch (Exception)
+            {
+                return new ApiResponse
+                {
+                    Success = false,
+                    Errors = [.. defaultDetail]
+                };
+            }
         }
 
         public async Task<ApiResponse> LoginAsync(LoginDTO loginDTO)
@@ -220,7 +189,7 @@ namespace EccomercePage.Api.Services
                     return new ApiResponse { Success = true };
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

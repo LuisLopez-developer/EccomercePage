@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+
+@inject IJSRuntime Js
+
+<div>
+
+
+    <main class="relative min-h-screen bg-cover bg-center">
+        <div class="relative">
+            @Body
+        </div>
+    </main>
+
+</div>
+
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Js.InvokeVoidAsync("window.initializeFlowbite");
+        }
+    }
+}
