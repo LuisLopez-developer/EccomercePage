@@ -59,34 +59,36 @@
 </AuthorizeView>
 
 @code {
-    private RegisterDTO registerDTO = new RegisterDTO();
+    private RegisterDTO registerDTO;  
+
     private List<ValidationFailure> validationErrors = [];
+
 
     private async Task HandleValidSubmit()
     {
-        validationErrors = new List<ValidationFailure>();
+       validationErrors = new List<ValidationFailure>();
 
-        var validationResult = await RegisterValidator.ValidateAsync(registerDTO);
-        if (validationResult.IsValid)
-        {
-            var response = await AuthService.RegisterAsync(registerDTO);
-            if (response.Success)
-            {
-                Navigation.NavigateTo("/");
-            }
-            else
-            {
-                // Manejar errores de registro
-                foreach (var error in response.Errors)
-                {
-                    // Mostrar errores en la interfaz de usuario
-                    validationErrors.Add(new ValidationFailure("", error));
-                }
-            }
-        }
-        else
-        {
-            validationErrors = validationResult.Errors;
-        }
-    }
+       var validationResult = await RegisterValidator.ValidateAsync(registerDTO);
+       if (validationResult.IsValid)
+       {
+           var response = await AuthService.RegisterAsync(registerDTO);
+           if (response.Success)
+           {
+               Navigation.NavigateTo("/");
+           }
+           else
+           {
+               // Manejar errores de registro
+               foreach (var error in response.Errors)
+               {
+                   // Mostrar errores en la interfaz de usuario
+                   validationErrors.Add(new ValidationFailure("", error));
+               }
+           }
+       }
+       else
+       {
+           validationErrors = validationResult.Errors;
+       }
+   }
 }
