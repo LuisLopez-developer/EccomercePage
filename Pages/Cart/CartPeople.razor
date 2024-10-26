@@ -1,13 +1,23 @@
 ﻿@layout AuthLayout
 @page "/cart/userdetails"
+
+@using EccomercePage.Api.Interfaces
 @using EccomercePage.Api.Repository
 @using EccomercePage.Api.Repository.States
+@using EccomercePage.Api.Services.Profile
 @using EccomercePage.Components.Order
+@using EccomercePage.Data.DTO.Profile
+@using EccomercePage.Data.Validations
 @using EccomercePage.Routes.Redirects
+@using FluentValidation
+@using FluentValidation.Results
 @using Microsoft.AspNetCore.Components.Authorization
 
 @inject CartState CartState
 @inject ICartRepository _cartRepository
+@inject IPeopleService _peopleServices
+@inject IValidator<AddPeopleDTO> AddPeopleValidator
+@inject NavigationManager Navigation
 
 <AuthorizeView>
     <NotAuthorized>
@@ -16,7 +26,18 @@
     <Authorized>
         <section class="flex max-w-full flex-row bg-gray-400">
             <div class="flex-grow-2 basis-2/3 bg-red-300">
+                <EditForm>
 
+                </EditForm>
+                @if (validationErrors != null && validationErrors.Count > 0)
+                {
+                    <ul>
+                        @foreach (var error in validationErrors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                }
             </div>
             <div class="flex-grow-1 basis-1/3 bg-blue-300">
                 <PurchaseSummary Total="@total"
@@ -39,5 +60,34 @@
     public void Dispose()
     {
         CartState.OnChange -= StateHasChanged;
+    }
+
+    private AddPeopleDTO addPeopleDTO = new AddPeopleDTO();
+    private List<ValidationFailure> validationErrors = [];
+
+    private async Task AddPeople()
+    {
+        var validationResult = await AddPeopleValidator.ValidateAsync(addPeopleDTO);
+        if (validationResult.IsValid)
+        {
+            var response = await _peopleServices.AddPeople(addPeopleDTO);
+            if (response != null)
+            {
+                //Navigation.NavigateTo("/cart/payment");
+            }
+            else
+            {
+                // Manejar errores de registro
+                foreach (var error in response?.Errors ?? [])
+                {
+                    // Mostrar errores en la interfaz de usuario
+                    validationErrors.Add(new ValidationFailure("", error));
+                }
+            }
+        }
+        else
+        {
+            validationErrors = validationResult.Errors.ToList();
+        }
     }
 }

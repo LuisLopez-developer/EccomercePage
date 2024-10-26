@@ -7,6 +7,7 @@ using EccomercePage.Api.Repository.States;
 using EccomercePage.Api.Services;
 using EccomercePage.Api.Services.AccountService;
 using EccomercePage.Api.Services.ProductServices;
+using EccomercePage.Api.Services.Profile;
 using EccomercePage.Data.DTO.CartDTO;
 using EccomercePage.Data.Validations;
 using FluentValidation;
@@ -39,6 +40,7 @@ builder.Services.AddScoped<IProductBrand, ProductBrandService>();
 builder.Services.AddScoped<IProductCategory, ProductCategoryService>();
 builder.Services.AddScoped<IRepository<CartReponseDTO, AddProductCartDTO, UpdateCartDTO>, CartServices>();
 builder.Services.AddScoped<ICartService, CartServices>();
+builder.Services.AddScoped<IPeopleService, PeopleServices>();
 
 // Registrar validadores
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterValidator>();
