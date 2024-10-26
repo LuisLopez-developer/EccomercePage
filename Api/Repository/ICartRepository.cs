@@ -8,5 +8,6 @@ namespace EccomercePage.Api.Repository
         Task UpdateCartResumeStateAsycn();
         Task<CartResumeDTO> GetCartResumeAsync();
         Task<bool> ChangeItemQuantity(ChangeItemQuantityDTO dto);
+        Task<int> GetTotalAmountAsync();
     }
 }
