@@ -1,16 +1,37 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
+﻿@using EccomercePage.Api.Interfaces
+@using EccomercePage.Api.Repository
+@using EccomercePage.Api.Repository.States
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject CartState CartState
+@inject ICartRepository _cartRepository
+
 <nav class="flex flex-row items-center gap-x-4">
     <AuthorizeView>
         <Authorized>
-
             <a href="/profile">Perfil</a>
-            <a href="/logout">Cerrar sesi�n</a>
-            <img src="/css/cart.svg" alt="Carrito de compras" />
-
+            <a href="/logout">Cerrar sesión</a>
+            <a href="/cart">
+                <img src="/css/cart.svg" alt="Carrito de compras" />
+                <span>@CartState.CartItems</span>
+            </a>
         </Authorized>
         <NotAuthorized>
-            <a href="/login">Iniciar sesi�n</a>
+            <a href="/login">Iniciar sesión</a>
             <a href="/signup">Registrarse</a>
         </NotAuthorized>
     </AuthorizeView>
 </nav>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        CartState.OnChange += StateHasChanged;
+        await _cartRepository.UpdateCartStateAsync();
+    }
+
+    public void Dispose()
+    {
+        CartState.OnChange -= StateHasChanged;
+    }
+}

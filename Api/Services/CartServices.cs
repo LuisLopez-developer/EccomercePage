@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace EccomercePage.Api.Services
 {
-    public class CartServices : IRepository<CartReponseDTO, AddProductCartDTO, UpdateCartDTO>
+    public class CartServices : ICartService
     {
         private readonly string api = "api/cart";
         private readonly HttpClient _httpClient;
@@ -36,6 +36,11 @@ namespace EccomercePage.Api.Services
         public Task<CartReponseDTO> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<int> GetTotalProductInCartAsync(string userId)
+        {
+            return await _httpClient.GetFromJsonAsync<int>($"{api}/total/{userId}");
         }
 
         public async Task<CartReponseDTO> InsertAsync(AddProductCartDTO insertDTO)

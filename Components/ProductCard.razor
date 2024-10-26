@@ -2,11 +2,15 @@
 
 @* Imports *@
 @using EccomercePage.Api.Interfaces
+@using EccomercePage.Api.Repository
+@using EccomercePage.Api.Repository.States
 @using EccomercePage.Data.DTO.CartDTO
 @using Microsoft.AspNetCore.Components.Authorization
 
 @inject IRepository<CartReponseDTO, AddProductCartDTO, UpdateCartDTO> _repository
 @inject IAuthService _authService
+@inject CartState CartState
+@inject ICartRepository _cartRepository
 
 @* Parameters *@
 @code {
@@ -51,9 +55,9 @@
 @code {
     // Aquí se puede añadir lógica para el componente
     private AddProductCartDTO cart = new AddProductCartDTO
-    {
-        CartItems = new List<CartItemDTO>()
-    };
+        {
+            CartItems = new List<CartItemDTO>()
+        };
 
     private async Task AddProductToCart()
     {
@@ -61,18 +65,27 @@
 
         if (string.IsNullOrEmpty(userID))
         {
-            // Manejar el caso en que el userID es null o vacío 
+            // Manejar el caso en que el userID es null o vacío
             Console.WriteLine("User ID is null or empty.");
             return;
         }
 
         cart.UserId = userID;
         cart.CartItems.Add(new CartItemDTO
-        {
-            ProductId = Id,
-            Quantity = 1
-        });
+            {
+                ProductId = Id,
+                Quantity = 1
+            });
 
         await _repository.InsertAsync(cart);
+
+        // Actualizar el estado del carrito
+        await _cartRepository.UpdateCartStateAsync();
+
+        // Reiniciar el objeto cart
+        cart = new AddProductCartDTO
+            {
+                CartItems = new List<CartItemDTO>()
+            };
     }
 }

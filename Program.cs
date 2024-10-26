@@ -2,6 +2,8 @@ using Blazored.LocalStorage;
 using EccomercePage;
 using EccomercePage.Api.Interfaces;
 using EccomercePage.Api.Interfaces.ProductInterfaces;
+using EccomercePage.Api.Repository;
+using EccomercePage.Api.Repository.States;
 using EccomercePage.Api.Services;
 using EccomercePage.Api.Services.AccountService;
 using EccomercePage.Api.Services.ProductServices;
@@ -24,11 +26,18 @@ builder.Services.AddTransient<CustomHttpHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthService>();
 builder.Services.AddScoped(sp => (IAuthService)sp.GetRequiredService<AuthenticationStateProvider>());
 
+// Congfigurar repositorios
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+// Configurar servicios de estado
+builder.Services.AddSingleton<CartState>();
+
 // Resto de servicios
 builder.Services.AddScoped<IProduct, ProductService>();
 builder.Services.AddScoped<IProductBrand, ProductBrandService>();
 builder.Services.AddScoped<IProductCategory, ProductCategoryService>();
 builder.Services.AddScoped<IRepository<CartReponseDTO, AddProductCartDTO, UpdateCartDTO>, CartServices>();
+builder.Services.AddScoped<ICartService, CartServices>();
 
 // Registrar validadores
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterValidator>();

@@ -1,0 +1,23 @@
+﻿@page "/cart"
+@using EccomercePage.Routes.Redirects
+@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+    <Authorized>
+        <section class="flex max-w-full flex-row bg-gray-400">
+            <div class="flex-grow-2 basis-2/3 bg-red-300">
+                listado de carrito
+            </div>
+            <div class="flex-grow-1 basis-1/3 bg-blue-300">
+                Resumen de compra
+            </div>
+        </section>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+}
