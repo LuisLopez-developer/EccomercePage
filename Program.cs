@@ -42,6 +42,8 @@ builder.Services.AddScoped<ICartService, CartServices>();
 
 // Registrar validadores
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<LoginValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AddPeopleValidator>();
 
 // Configura un HttpClient con un tiempo de vida "scoped"
 builder.Services.AddScoped(sp => new HttpClient
