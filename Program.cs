@@ -31,6 +31,7 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 // Configurar servicios de estado
 builder.Services.AddSingleton<CartState>();
+builder.Services.AddSingleton<CartResumenState>();
 
 // Resto de servicios
 builder.Services.AddScoped<IProduct, ProductService>();

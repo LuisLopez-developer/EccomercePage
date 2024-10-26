@@ -2,29 +2,17 @@
 @using EccomercePage.Api.Repository.States
 @* Parameters *@
 
-@inject CartState CartState
-@inject ICartRepository _cartRepository
 
 @code{
     [Parameter] public decimal Total { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        CartState.OnChange += StateHasChanged;
-        await _cartRepository.UpdateCartStateAsync();
-    }
-
-    public void Dispose()
-    {
-        CartState.OnChange -= StateHasChanged;
-    }
+    [Parameter] public int TotalProducts { get; set; }
 }
 
 <aside>
     <h5>Resumen de Compra</h5>
     <div class="flex flex-col">
         <div class="flex justify-between">
-            <span>Productos(@CartState.CartItems)</span>
+            <span>Productos(@TotalProducts)</span>
             <span>S/ @Total</span>
         </div>
         <div class="flex justify-between">

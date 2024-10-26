@@ -5,6 +5,8 @@ namespace EccomercePage.Api.Repository
     public interface ICartRepository
     {
         Task UpdateCartStateAsync();
+        Task UpdateCartResumeStateAsycn();
         Task<CartResumeDTO> GetCartResumeAsync();
+        Task<bool> ChangeItemQuantity(ChangeItemQuantityDTO dto);
     }
 }

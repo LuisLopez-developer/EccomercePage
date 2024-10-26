@@ -1,14 +1,16 @@
-﻿@* Parameters *@
+﻿@using EccomercePage.Data.DTO.CartDTO
 
 @code {
-    [Parameter] public int Id { get; set; }
-    [Parameter] public string ImageSrc { get; set; } = "Sin informaci�n";
-    [Parameter] public string ImageAlt { get; set; } = "Sin informaci�n";
-    [Parameter] public string Name { get; set; } = "Sin informaci�n";
+    [Parameter] public EventCallback<ChangeItemQuantityDTO> OnQuantityChanged { get; set; }
+
+    [Parameter] public int ProductId { get; set; }
+    [Parameter] public int CartItemId { get; set; }
+    [Parameter] public string ImageSrc { get; set; } = "Sin información";
+    [Parameter] public string ImageAlt { get; set; } = "Sin información";
+    [Parameter] public string Name { get; set; } = "Sin información";
     [Parameter] public decimal TotalPrice { get; set; }
     [Parameter] public int Quantity { get; set; }
     [Parameter] public int ExistenceQuantity { get; set; }
-    [Parameter] public string Class { get; set; } = string.Empty;
 
     private string GetAvailabilityMessage()
     {
@@ -19,25 +21,37 @@
         }
         return $"{ExistenceQuantity} disponibles";
     }
+
+    private async Task ChangeQuantity(ChangeAction action)
+    {
+        if ((action == ChangeAction.increase_quantity && Quantity >= ExistenceQuantity) ||
+            (action == ChangeAction.decrease_quantity && Quantity <= 1))
+        {
+            return;
+        }
+
+        // Invoca el callback para informar al padre
+        await OnQuantityChanged.InvokeAsync(new ChangeItemQuantityDTO
+            {
+                ItemId = CartItemId,
+                Quantity = Quantity,
+                Action = action
+            });
+    }
 }
+
 <div class="flex flex-row items-center justify-between">
     <img src="@ImageSrc" alt="@ImageAlt" class="aspect-[1/1] max-h-16 max-w-16" />
     <a>
-        <span>
-            @Name
-        </span>
+        <span>@Name</span>
     </a>
     <div>
         <div class="flex max-w-full justify-around">
-            <button>-</button>
+            <button @onclick="() => ChangeQuantity(ChangeAction.decrease_quantity)">-</button>
             <span>@Quantity</span>
-            <button>+</button>
+            <button @onclick="() => ChangeQuantity(ChangeAction.increase_quantity)">+</button>
         </div>
-        <span>
-            @GetAvailabilityMessage()
-        </span>
+        <span>@GetAvailabilityMessage()</span>
     </div>
-    <span>
-        S/ @TotalPrice
-    </span>
+    <span>S/ @TotalPrice</span>
 </div>

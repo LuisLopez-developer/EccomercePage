@@ -1,5 +1,6 @@
 ﻿using EccomercePage.Api.Interfaces;
 using EccomercePage.Data.DTO.CartDTO;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -21,6 +22,13 @@ namespace EccomercePage.Api.Services
         }
 
         public List<string> Errors => throw new NotImplementedException();
+
+        public async Task<bool> ChangeItemQuantity(ChangeItemQuantityDTO dto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"{api}/changeItemQuantity", dto, jsonSerializerOptions);
+            return response.IsSuccessStatusCode && response.StatusCode == HttpStatusCode.NoContent;
+        }
+
 
         public Task<CartReponseDTO> DeleteAsync(int id)
         {
