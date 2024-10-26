@@ -48,7 +48,7 @@ namespace EccomercePage.Api.Repository
             return await _cartService.GetCartResumeAsync(userID);
         }
 
-        public async Task<int> GetTotalAmountAsync()
+        public async Task<decimal> GetTotalAmountAsync()
         {
             var userID = await _authService.GetUserIdAsync();
             if (string.IsNullOrEmpty(userID))

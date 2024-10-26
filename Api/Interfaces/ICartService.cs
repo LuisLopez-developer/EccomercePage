@@ -7,6 +7,6 @@ namespace EccomercePage.Api.Interfaces
         Task<int> GetTotalProductInCartAsync(string userId);
         Task<CartResumeDTO> GetCartResumeAsync(string userId);
         Task<bool> ChangeItemQuantity(ChangeItemQuantityDTO dto);
-        Task<int> GetTotalAmountCartAsync(string userId);
+        Task<decimal> GetTotalAmountCartAsync(string userId);
     }
 }

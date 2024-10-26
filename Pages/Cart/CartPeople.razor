@@ -1,0 +1,43 @@
+﻿@layout AuthLayout
+@page "/cart/userdetails"
+@using EccomercePage.Api.Repository
+@using EccomercePage.Api.Repository.States
+@using EccomercePage.Components.Order
+@using EccomercePage.Routes.Redirects
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject CartState CartState
+@inject ICartRepository _cartRepository
+
+<AuthorizeView>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+    <Authorized>
+        <section class="flex max-w-full flex-row bg-gray-400">
+            <div class="flex-grow-2 basis-2/3 bg-red-300">
+
+            </div>
+            <div class="flex-grow-1 basis-1/3 bg-blue-300">
+                <PurchaseSummary Total="@total"
+                                 TotalProducts="@CartState.CartItems" />
+            </div>
+        </section>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private decimal total;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CartState.OnChange += StateHasChanged;
+        await _cartRepository.UpdateCartStateAsync();
+        total = await _cartRepository.GetTotalAmountAsync();
+    }
+
+    public void Dispose()
+    {
+        CartState.OnChange -= StateHasChanged;
+    }
+}

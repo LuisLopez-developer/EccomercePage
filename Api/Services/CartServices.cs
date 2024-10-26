@@ -50,9 +50,9 @@ namespace EccomercePage.Api.Services
             return await _httpClient.GetFromJsonAsync<CartResumeDTO>($"{api}/resume/{userId}") ?? new CartResumeDTO();
         }
 
-        public async Task<int> GetTotalAmountCartAsync(string userId)
+        public async Task<decimal> GetTotalAmountCartAsync(string userId)
         {
-            return await _httpClient.GetFromJsonAsync<int>($"{api}/totalAmount/{userId}");
+            return await _httpClient.GetFromJsonAsync<decimal>($"{api}/totalAmount/{userId}");
         }
 
         public async Task<int> GetTotalProductInCartAsync(string userId)
