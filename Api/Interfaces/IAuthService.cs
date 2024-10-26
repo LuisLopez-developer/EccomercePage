@@ -9,5 +9,6 @@ namespace EccomercePage.Api.Interfaces
         Task<ApiResponse> LoginAsync(LoginDTO loginDTO);
         Task LogoutAsync();
         Task<bool> CheckAuthenticatedAsync();
+        Task<string> GetUserIdAsync();
     }
 }

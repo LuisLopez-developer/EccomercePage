@@ -15,6 +15,7 @@ namespace EccomercePage.Api.Services
     public class AuthService : AuthenticationStateProvider, IAuthService
     {
         private bool _authenticated = false;
+        private ClaimsPrincipal _authenticatedUser = new(new ClaimsIdentity());
         private readonly ClaimsPrincipal Unauthenticated = new(new ClaimsIdentity());
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions jsonSerializerOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
@@ -29,19 +30,29 @@ namespace EccomercePage.Api.Services
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
             if (_authenticated)
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            {
+                Console.WriteLine("Already authenticated.");
+                return new AuthenticationState(_authenticatedUser);
+            }
 
             var user = Unauthenticated;
             try
             {
                 var accessToken = await _localStorageService.GetItemAsync<string>("accessToken");
                 if (string.IsNullOrWhiteSpace(accessToken))
+                {
+                    Console.WriteLine("Access token is null or empty.");
                     return new AuthenticationState(user);
+                }
 
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                var userResponse = await _httpClient.GetAsync("manage/info");
-                if (!userResponse.IsSuccessStatusCode) return new AuthenticationState(user);
+                var userResponse = await _httpClient.GetAsync("/api/eccomerce/Account/GetUserInfo");
+                if (!userResponse.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Failed to get user info.");
+                    return new AuthenticationState(user);
+                }
 
                 var userInfo = JsonSerializer.Deserialize<UserInfo>(
                     await userResponse.Content.ReadAsStringAsync(), jsonSerializerOptions);
@@ -55,21 +66,35 @@ namespace EccomercePage.Api.Services
                     claims.Add(new Claim(ClaimTypes.PrimarySid, userInfo.Id));
                     claims.Add(new Claim(ClaimTypes.Name, userInfo.UserName));
                     claims.Add(new Claim(ClaimTypes.Email, userInfo.Email));
-                    
+
                     userInfo.Roles?.ToList().ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role)));
 
-                    user = new ClaimsPrincipal(new ClaimsIdentity(claims, nameof(AuthService)));
+                    _authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(claims, nameof(AuthService)));
                     _authenticated = true;
+
+                    // Mensaje de depuración
+                    Console.WriteLine($"User authenticated: {userInfo.UserName}, ID: {userInfo.Id}");
+                }
+                else
+                {
+                    // Mensaje de depuración
+                    Console.WriteLine("UserInfo is null after deserialization.");
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                // Mensaje de depuración
+                Console.WriteLine($"Exception in GetAuthenticationStateAsync: {ex.Message}");
+            }
 
-            return new AuthenticationState(user);
+            return new AuthenticationState(_authenticatedUser);
         }
 
         public async Task LogoutAsync()
         {
             await _httpClient.PostAsync("api/user/Logout", new StringContent("{}", Encoding.UTF8, "application/json"));
+            _authenticated = false;
+            _authenticatedUser = Unauthenticated;
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
@@ -115,12 +140,16 @@ namespace EccomercePage.Api.Services
                     if (tokenInfo != null)
                     {
                         await _localStorageService.SetItemAsync("accessToken", tokenInfo.AccessToken);
+                        _authenticated = true;
                         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
                         return new ApiResponse { Success = true };
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception in LoginAsync: {ex.Message}");
+            }
 
             return new ApiResponse
             {
@@ -142,6 +171,25 @@ namespace EccomercePage.Api.Services
                 .ToArray();
 
             return new ApiResponse { Errors = errors };
+        }
+
+        public async Task<string> GetUserIdAsync()
+        {
+            var authState = await GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var userIdClaim = user.FindFirst(ClaimTypes.PrimarySid);
+                if (userIdClaim != null)
+                {
+                    Console.WriteLine($"User ID: {userIdClaim.Value}");
+                    return userIdClaim.Value;
+                }
+
+            }
+
+            return "";
         }
     }
 }
