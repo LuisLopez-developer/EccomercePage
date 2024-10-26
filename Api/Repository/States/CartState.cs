@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace EccomercePage.Api.Repository.States
+﻿namespace EccomercePage.Api.Repository.States
 {
     public class CartState
     {
