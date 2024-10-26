@@ -1,5 +1,6 @@
 ﻿using EccomercePage.Api.Interfaces;
 using EccomercePage.Api.Repository.States;
+using EccomercePage.Data.DTO.CartDTO;
 
 namespace EccomercePage.Api.Repository
 {
@@ -14,6 +15,17 @@ namespace EccomercePage.Api.Repository
             _authService = authService;
             _cartService = cartService;
             _cartState = cartState;
+        }
+
+        public async Task<CartResumeDTO> GetCartResumeAsync()
+        {
+            var userID = await _authService.GetUserIdAsync();
+            if (string.IsNullOrEmpty(userID))
+            {
+                return new CartResumeDTO();
+            }
+
+            return await _cartService.GetCartResumeAsync(userID);
         }
 
         public async Task UpdateCartStateAsync()

@@ -1,6 +1,12 @@
 ﻿@page "/cart"
+
+@using EccomercePage.Api.Repository
+@using EccomercePage.Components.Order
+@using EccomercePage.Data.DTO.CartDTO
 @using EccomercePage.Routes.Redirects
 @using Microsoft.AspNetCore.Components.Authorization
+
+@inject ICartRepository _cartRepository
 
 <AuthorizeView>
     <NotAuthorized>
@@ -9,15 +15,28 @@
     <Authorized>
         <section class="flex max-w-full flex-row bg-gray-400">
             <div class="flex-grow-2 basis-2/3 bg-red-300">
-                listado de carrito
+                @foreach (var item in cartResume.CartItems)
+                {
+                    <CartProductCard Id="item.ProductId"
+                                     ImageSrc="@item.ImageUrl"
+                                     Name="@item.ProductName"
+                                     TotalPrice="item.Total"
+                                     Quantity="item.Quantity"
+                                     ExistenceQuantity="item.ExistentQuantity" />
+                }
             </div>
             <div class="flex-grow-1 basis-1/3 bg-blue-300">
-                Resumen de compra
+                <PurchaseSummary Total="@cartResume.Total"/>
             </div>
         </section>
     </Authorized>
 </AuthorizeView>
 
 @code {
+    private CartResumeDTO cartResume = new CartResumeDTO();
 
+    protected override async Task OnInitializedAsync()
+    {
+        cartResume = await _cartRepository.GetCartResumeAsync();
+    }
 }

@@ -1224,6 +1224,10 @@ input:checked + .toggle-bg {
   display: none;
 }
 
+.aspect-\[1\/1\] {
+  aspect-ratio: 1/1;
+}
+
 .h-14 {
   height: 3.5rem;
 }
@@ -1250,6 +1254,10 @@ input:checked + .toggle-bg {
 
 .h-screen {
   height: 100vh;
+}
+
+.max-h-16 {
+  max-height: 4rem;
 }
 
 .min-h-screen {
@@ -1282,6 +1290,10 @@ input:checked + .toggle-bg {
 
 .w-full {
   width: 100%;
+}
+
+.max-w-16 {
+  max-width: 4rem;
 }
 
 .max-w-full {

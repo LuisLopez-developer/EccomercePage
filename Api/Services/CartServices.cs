@@ -1,7 +1,6 @@
 ﻿using EccomercePage.Api.Interfaces;
 using EccomercePage.Data.DTO.CartDTO;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 
 namespace EccomercePage.Api.Services
@@ -36,6 +35,11 @@ namespace EccomercePage.Api.Services
         public Task<CartReponseDTO> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<CartResumeDTO> GetCartResumeAsync(string userId)
+        {
+            return await _httpClient.GetFromJsonAsync<CartResumeDTO>($"{api}/resume/{userId}") ?? new CartResumeDTO();
         }
 
         public async Task<int> GetTotalProductInCartAsync(string userId)
