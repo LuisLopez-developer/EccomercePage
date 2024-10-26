@@ -14,7 +14,9 @@
             <div class="flex gap-[14px]">
                 @foreach (var product in Products)
                 {
-                    <ProductCard Class="h-84 w-[244.8px]" ImageSrc="@product.ImageUrl"
+                    <ProductCard Id="@product.Id"
+                                 Class="h-84 w-[244.8px]"
+                                 ImageSrc="@product.ImageUrl"
                                  ImageAlt="@product.Name"
                                  Name="@product.Name"
                                  Price="@product.Price" />

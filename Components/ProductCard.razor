@@ -1,18 +1,26 @@
 ﻿@namespace EccomercePage.Components
 
+@* Imports *@
+@using EccomercePage.Api.Interfaces
+@using EccomercePage.Data.DTO.CartDTO
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject IRepository<CartReponseDTO, AddProductCartDTO, UpdateCartDTO> _repository
+@inject IAuthService _authService
+
 @* Parameters *@
 @code {
+    [Parameter] public int Id { get; set; }
     [Parameter] public string ImageSrc { get; set; } = "Sin información";
     [Parameter] public string ImageAlt { get; set; } = "Sin información";
     [Parameter] public string Name { get; set; } = "Sin información";
     [Parameter] public decimal Price { get; set; }
     [Parameter] public string Class { get; set; } = string.Empty;
-
 }
 
-<div class="@Class bg-white/30 rounded-lg border-transparent shadow dark:bg-gray-800/30">
+<div id="@Id" class="@Class bg-white/30 rounded-lg border-transparent shadow dark:bg-gray-800/30">
     <!-- Cambiado a fondo semi-transparente -->
-    <a href="#">
+    <a href="@Id.ToString()">
         <img class="rounded-t-lg p-8" src="@ImageSrc" alt="@ImageAlt" />
     </a>
     <div class="px-5 pb-5">
@@ -23,7 +31,9 @@
         </a>
 
         <div class="flex items-center justify-center">
-            <a href="#" class="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Añadir al carrito</a>
+            <button @onclick="AddProductToCart" class="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Añadir al carrito
+            </button>
         </div>
     </div>
 </div>
@@ -37,3 +47,32 @@
         overflow: hidden;
     }
 </style>
+
+@code {
+    // Aquí se puede añadir lógica para el componente
+    private AddProductCartDTO cart = new AddProductCartDTO
+    {
+        CartItems = new List<CartItemDTO>()
+    };
+
+    private async Task AddProductToCart()
+    {
+        var userID = await _authService.GetUserIdAsync();
+
+        if (string.IsNullOrEmpty(userID))
+        {
+            // Manejar el caso en que el userID es null o vacío 
+            Console.WriteLine("User ID is null or empty.");
+            return;
+        }
+
+        cart.UserId = userID;
+        cart.CartItems.Add(new CartItemDTO
+        {
+            ProductId = Id,
+            Quantity = 1
+        });
+
+        await _repository.InsertAsync(cart);
+    }
+}
