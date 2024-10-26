@@ -26,8 +26,27 @@
     <Authorized>
         <section class="flex max-w-full flex-row bg-gray-400">
             <div class="flex-grow-2 basis-2/3 bg-red-300">
-                <EditForm>
+                <EditForm Model="@addPeopleDTO" OnValidSubmit="AddPeople" Context="editFormContext">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
+                    <div>
+                        <label for="name">Nombre</label>
+                        <InputText id="name" @bind-Value="addPeopleDTO.Name" />
+                    </div>
+                    <div>
+                        <label for="lastName">Apellidos</label>
+                        <InputText id="lastName" @bind-Value="addPeopleDTO.LastName" />
+                    </div>
+                    <div>
+                        <label for="dni">DNI</label>
+                        <InputText id="dni" @bind-Value="addPeopleDTO.DNI" />
+                    </div>
+                    <div>
+                        <label for="direccion">Dirección</label>
+                        <InputText id="direccion" @bind-Value="addPeopleDTO.Address" />
+                    </div>
+                    <button type="submit">Guardar</button>
                 </EditForm>
                 @if (validationErrors != null && validationErrors.Count > 0)
                 {
