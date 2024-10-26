@@ -1,0 +1,43 @@
+﻿@* Parameters *@
+
+@code {
+    [Parameter] public int Id { get; set; }
+    [Parameter] public string ImageSrc { get; set; } = "Sin informaci�n";
+    [Parameter] public string ImageAlt { get; set; } = "Sin informaci�n";
+    [Parameter] public string Name { get; set; } = "Sin informaci�n";
+    [Parameter] public decimal TotalPrice { get; set; }
+    [Parameter] public int Quantity { get; set; }
+    [Parameter] public int ExistenceQuantity { get; set; }
+    [Parameter] public string Class { get; set; } = string.Empty;
+
+    private string GetAvailabilityMessage()
+    {
+        if (ExistenceQuantity >= 11)
+        {
+            int availableInTens = (ExistenceQuantity / 10 - 1) * 10;
+            return $"+{availableInTens} disponibles";
+        }
+        return $"{ExistenceQuantity} disponibles";
+    }
+}
+<div class="flex flex-row items-center justify-between">
+    <img src="@ImageSrc" alt="@ImageAlt" class="aspect-[1/1] max-h-16 max-w-16" />
+    <a>
+        <span>
+            @Name
+        </span>
+    </a>
+    <div>
+        <div class="flex max-w-full justify-around">
+            <button>-</button>
+            <span>@Quantity</span>
+            <button>+</button>
+        </div>
+        <span>
+            @GetAvailabilityMessage()
+        </span>
+    </div>
+    <span>
+        S/ @TotalPrice
+    </span>
+</div>
