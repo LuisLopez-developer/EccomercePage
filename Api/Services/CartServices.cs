@@ -45,6 +45,11 @@ namespace EccomercePage.Api.Services
             throw new NotImplementedException();
         }
 
+        public async Task<CartItemsPaymentDTO> GetCartItemsPaymentAsync(string userId)
+        {
+            return await _httpClient.GetFromJsonAsync<CartItemsPaymentDTO>($"{api}/itemsPayment/{userId}") ?? new CartItemsPaymentDTO();
+        }
+
         public async Task<CartResumeDTO> GetCartResumeAsync(string userId)
         {
             return await _httpClient.GetFromJsonAsync<CartResumeDTO>($"{api}/resume/{userId}") ?? new CartResumeDTO();
