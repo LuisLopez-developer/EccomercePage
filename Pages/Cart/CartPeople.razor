@@ -18,6 +18,7 @@
 @inject IPeopleService _peopleServices
 @inject IValidator<AddPeopleDTO> AddPeopleValidator
 @inject NavigationManager Navigation
+@inject IUserRepository _userRepository
 
 <AuthorizeView>
     <NotAuthorized>
@@ -71,9 +72,19 @@
 
     protected override async Task OnInitializedAsync()
     {
+        ValidateUserHasBillingInformation();
+
         CartState.OnChange += StateHasChanged;
         await _cartRepository.UpdateCartStateAsync();
         total = await _cartRepository.GetTotalAmountAsync();
+    }
+
+    private async void ValidateUserHasBillingInformation()
+    {
+        if (await _userRepository.IsUserLinkedToPerson())
+        {
+            Navigation.NavigateTo("/cart/payment");
+        }
     }
 
     public void Dispose()
@@ -92,7 +103,7 @@
             var response = await _peopleServices.AddPeople(addPeopleDTO);
             if (response != null)
             {
-                //Navigation.NavigateTo("/cart/payment");
+                Navigation.NavigateTo("/cart/payment");
             }
             else
             {
