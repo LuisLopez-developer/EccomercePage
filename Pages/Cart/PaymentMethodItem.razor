@@ -1,0 +1,19 @@
+@code {
+    [Parameter] public int Id { get; set; }
+    [Parameter] public string Name { get; set; } = "sin informacion";
+    [Parameter] public string Description { get; set; } = "sin informacion";
+
+    [Parameter] public int Value { get; set; }
+    [Parameter] public EventCallback<int> ValueChanged { get; set; }
+
+    private async Task OnSelectedChanged(ChangeEventArgs e)
+    {
+        Value = Id;
+        await ValueChanged.InvokeAsync(Id);
+    }
+}
+
+<div class="flex items-center">
+    <input type="radio" id="@Id" name="paymentMethod" @onchange="OnSelectedChanged" checked="@(@Value == Id)">
+    <label for="@Id" class="ml-2">@Name</label>
+</div>

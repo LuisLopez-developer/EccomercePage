@@ -22,7 +22,7 @@ namespace EccomercePage.Api.Services
 
         public async Task<IEnumerable<PaymentMethodDTO>> GetAllAsync()
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<PaymentMethodDTO>>(api) ?? [];
+            return await _httpClient.GetFromJsonAsync<IEnumerable<PaymentMethodDTO>>($"{api}/getAll") ?? [];
         }
     }
 }
