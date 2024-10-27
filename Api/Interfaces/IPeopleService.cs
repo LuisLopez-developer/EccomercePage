@@ -6,5 +6,6 @@ namespace EccomercePage.Api.Interfaces
     public interface IPeopleService
     {
         Task<ApiResponse> AddPeople(AddPeopleDTO dto);
+        Task<bool> IsUserLinkedToPerson(string userId)
     }
 }

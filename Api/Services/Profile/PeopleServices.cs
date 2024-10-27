@@ -37,6 +37,11 @@ namespace EccomercePage.Api.Services.Profile
             };
         }
 
+        public async Task<bool> IsUserLinkedToPerson(string userId)
+        {
+            return await _httpClient.GetFromJsonAsync<bool>($"{api}/IsUserLinkedToPerson/{userId}");
+        }
+
         private async Task<ApiResponse> ParseErrorResponseAsync(HttpResponseMessage response)
         {
             var details = await response.Content.ReadAsStringAsync();
