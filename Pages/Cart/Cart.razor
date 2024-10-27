@@ -32,6 +32,7 @@
             <div class="flex-grow-1 basis-1/3 bg-blue-300">
                 <PurchaseSummary Total="@_cartResumenState.CartResume.Total"
                                  TotalProducts="@_cartResumenState.CartResume.CartItems.Sum(ci => ci.Quantity)" />
+                <NavLink href="/cart/userdetails">Continuar con la compra</NavLink>
             </div>
         </section>
     </Authorized>
