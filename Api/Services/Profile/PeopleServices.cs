@@ -1,6 +1,5 @@
 ﻿using EccomercePage.Api.Interfaces;
 using EccomercePage.Data.DTO.Profile;
-using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -16,13 +15,18 @@ namespace EccomercePage.Api.Services.Profile
               PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
           };
 
-        public PeopleServices(IHttpClientFactory httpClientFactory)
+        private readonly IAuthService _authService;
+
+        public PeopleServices(IHttpClientFactory httpClientFactory, IAuthService authService)
         {
             _httpClient = httpClientFactory.CreateClient("Auth");
+            _authService = authService;
         }
 
         public async Task<ApiResponse> AddPeople(AddPeopleDTO dto)
         {
+            dto.UserId = await _authService.GetUserIdAsync(); 
+
             var response = await _httpClient.PostAsJsonAsync($"{api}", dto, jsonSerializerOptions);
 
             var errorResponse = await ParseErrorResponseAsync(response);
