@@ -1,6 +1,6 @@
 ﻿namespace EccomercePage.Api.Interfaces
 {
-    public interface IGetRepository<T>
+    public interface IGetService<T>
     {
         Task<IEnumerable<T>> GetAllAsync();
     }

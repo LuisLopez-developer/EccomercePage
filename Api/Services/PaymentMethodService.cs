@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace EccomercePage.Api.Services
 {
-    public class PaymentMethodService : IGetRepository<PaymentMethodDTO>
+    public class PaymentMethodService : IGetService<PaymentMethodDTO>
     {
         private readonly string api = "/api/PaymentMethod";
         private readonly HttpClient _httpClient;
