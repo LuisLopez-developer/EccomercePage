@@ -42,6 +42,7 @@ builder.Services.AddScoped<IRepository<CartReponseDTO, AddProductCartDTO, Update
 builder.Services.AddScoped<ICartService, CartServices>();
 builder.Services.AddScoped<IPeopleService, PeopleServices>();
 builder.Services.AddScoped<IGetService<PaymentMethodDTO>, PaymentMethodService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Registrar validadores

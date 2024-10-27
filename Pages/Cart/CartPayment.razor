@@ -11,6 +11,8 @@
 @inject CartState CartState
 @inject ICartRepository _cartRepository
 @inject IGetService<PaymentMethodDTO> _paymentMethodService
+@inject IOrderService _orderService
+@inject NavigationManager Navigation
 
 <AuthorizeView>
     <NotAuthorized>
@@ -42,6 +44,7 @@
             <div class="flex-grow-1 basis-1/3 bg-blue-300">
                 <PurchaseSummary Total="@total"
                                  TotalProducts="@CartState.CartItems" />
+                <button @onclick="GenerateOrder">Generar pedido</button>
             </div>
         </section>
     </Authorized>
@@ -69,11 +72,31 @@
         }
     }
 
-    private Task OnPaymentMethodChanged(int selectedId)
+    private void OnPaymentMethodChanged(int selectedId)
     {
         SelectedPaymentMethodId = selectedId;
-        Console.WriteLine($"Método de pago seleccionado: {SelectedPaymentMethodId}");
-        return Task.CompletedTask;
+    }
+
+    private async void GenerateOrder()
+    {
+        if (SelectedPaymentMethodId == 0)
+        {
+            return;
+        }
+
+        if (cartItemsPaymentDTO.Id == 0)
+        {
+            return;
+        }
+
+        var result = await _orderService.GenerateOrderThroughCart(cartItemsPaymentDTO.Id, SelectedPaymentMethodId);
+
+        if (result)
+        {
+            await _cartRepository.UpdateCartStateAsync();
+            Navigation.NavigateTo("/");
+        }
+
     }
 
     public void Dispose()
