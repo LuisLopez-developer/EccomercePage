@@ -1,0 +1,14 @@
+﻿@code{
+    [Parameter] public string ImageSrc { get; set; } = "Sin información";
+    [Parameter] public string ImageAlt { get; set; } = "Sin información";
+    [Parameter] public string Name { get; set; } = "Sin información";
+    [Parameter] public int Quantity { get; set; }
+}
+
+<div class="flex max-w-full items-center gap-x-4">
+    <img src="@ImageSrc" alt="@ImageAlt" class="aspect-[1/1] max-h-16 max-w-16" />
+    <div class="flex flex-col">
+        <span>@Name</span>
+        <span>@Quantity</span>
+    </div>
+</div>
