@@ -1,10 +1,23 @@
-﻿<header class="max-w-full">
-    <div class="flex flex-row items-center justify-around">
-        <Logo />
-        <Search />
-        <NavPlus />
+﻿<header class="w-full shadow-lg" style="background: linear-gradient(170deg,#0a0000, #08113d, #0a0000);">
+    <div class="flex items-center justify-between p-4 max-w-screen-xl mx-auto">
+        <!-- Logo alineado a la izquierda -->
+        <div class="flex-shrink-0">
+            <Logo />
+        </div>
+
+        <!-- Buscador centrado y de tamaño extendido -->
+        <div class="flex-grow max-w-lg mx-auto">
+            <Search />
+        </div>
+
+        <!-- Botones "Iniciar sesión" y "Registrarse" alineados a la derecha -->
+        <div class="flex items-center space-x-4">
+            <NavPlus />
+        </div>
     </div>
-    <div class="flex justify-center">
+
+    <!-- Menú de navegación centrado debajo -->
+    <div class="flex justify-center p-2">
         <NavMenu />
     </div>
 </header>
