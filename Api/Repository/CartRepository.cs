@@ -37,6 +37,13 @@ namespace EccomercePage.Api.Repository
             return isSuccess;
         }
 
+        public async Task<CartItemsPaymentDTO> GetCartItemsPaymentAsync()
+        {
+            var userID = await _authService.GetUserIdAsync();
+
+            return await _cartService.GetCartItemsPaymentAsync(userID);
+        }
+
         public async Task<CartResumeDTO> GetCartResumeAsync()
         {
             var userID = await _authService.GetUserIdAsync();
