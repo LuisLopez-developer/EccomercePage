@@ -41,6 +41,7 @@ builder.Services.AddScoped<IProductCategory, ProductCategoryService>();
 builder.Services.AddScoped<IRepository<CartReponseDTO, AddProductCartDTO, UpdateCartDTO>, CartServices>();
 builder.Services.AddScoped<ICartService, CartServices>();
 builder.Services.AddScoped<IPeopleService, PeopleServices>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Registrar validadores
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterValidator>();
