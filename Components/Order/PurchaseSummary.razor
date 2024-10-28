@@ -8,14 +8,14 @@
     [Parameter] public int TotalProducts { get; set; }
 }
 
-<aside>
-    <h5>Resumen de Compra</h5>
-    <div class="flex flex-col">
-        <div class="flex justify-between">
-            <span>Productos(@TotalProducts)</span>
+<aside style="padding: 20px; border-radius: 8px; background-color: #f9f9f9; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <h5 style="margin-bottom: 15px; font-size: 1.5rem; color: #333;">Resumen de Compra</h5>
+    <div style="display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between;">
+            <span>Productos (@TotalProducts)</span>
             <span>S/ @Total</span>
         </div>
-        <div class="flex justify-between">
+        <div style="display: flex; justify-content: space-between;">
             <span>Total</span>
             <span>S/ @Total</span>
         </div>
