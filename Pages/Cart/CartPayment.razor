@@ -19,8 +19,9 @@
         <RedirectToLogin />
     </NotAuthorized>
     <Authorized>
-        <section class="flex max-w-full flex-row bg-gray-400">
-            <div class="flex-grow-2 basis-2/3 bg-red-300">
+        <section class="flex max-w-full flex-row p-4" style="background: linear-gradient(170deg, #0a0000, #08113d, #0a0000);">
+            <div class="flex-grow bg-red-700 p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold mb-4 text-white">Resumen de Pedido</h2>
                 <div>
                     @foreach (var item in cartItemsPaymentDTO.CartItems)
                     {
@@ -29,7 +30,8 @@
                                                 Quantity="@item.Quantity" />
                     }
                 </div>
-                <div class="flex gap-x-4">
+                <div class="flex flex-col mt-4 gap-4">
+                    <h3 class="font-medium text-white">Métodos de Pago</h3>
                     @foreach (var paymentMethod in paymentMethods)
                     {
                         <PaymentMethodItem Id="@paymentMethod.Id"
@@ -39,12 +41,12 @@
                                            ValueChanged="OnPaymentMethodChanged" />
                     }
                 </div>
-
             </div>
-            <div class="flex-grow-1 basis-1/3 bg-blue-300">
+            <div class="flex-grow-1 basis-1/3 bg-blue-300 p-4 rounded-lg shadow-md">
+                <h2 class="text-xl font-bold mb-4 text-white">Resumen de Compra</h2>
                 <PurchaseSummary Total="@total"
                                  TotalProducts="@CartState.CartItems" />
-                <button @onclick="GenerateOrder">Generar pedido</button>
+                <Button Size="lg" @onclick="GenerateOrder">Generar pedido</Button>
             </div>
         </section>
     </Authorized>
