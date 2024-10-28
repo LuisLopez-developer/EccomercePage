@@ -103,7 +103,7 @@
         if (validationResult.IsValid)
         {
             var response = await _peopleServices.AddPeople(addPeopleDTO);
-            if (response != null)
+            if (response.Success)
             {
                 Navigation.NavigateTo("/cart/payment");
             }
