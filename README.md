@@ -27,6 +27,11 @@ npm install
 dotnet watch --launch-profile https
 ```
 
+5. Publicación del Proyecto:
+```bash
+https://eccomerce-blazor-page.netlify.app/
+```
+
 ## Creditos especiales
 A: [**Rasheed K Mozaffar**](https://github.com/rasheed-k-mozaffar/FlowbiteBlazorWasmStarter) 
 
