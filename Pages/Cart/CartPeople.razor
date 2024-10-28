@@ -103,19 +103,7 @@
         if (validationResult.IsValid)
         {
             var response = await _peopleServices.AddPeople(addPeopleDTO);
-            if (response.Success)
-            {
-                Navigation.NavigateTo("/cart/payment");
-            }
-            else
-            {
-                // Manejar errores de registro
-                foreach (var error in response?.Errors ?? [])
-                {
-                    // Mostrar errores en la interfaz de usuario
-                    validationErrors.Add(new ValidationFailure("", error));
-                }
-            }
+            ValidateUserHasBillingInformation();
         }
         else
         {
