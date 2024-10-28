@@ -5,20 +5,22 @@
 
 @inject CartState CartState
 @inject ICartRepository _cartRepository
+@inject IAuthService _authService
+@inject NavigationManager Navigation
 
 <nav class="flex flex-row items-center gap-x-4">
     <AuthorizeView>
         <Authorized>
             <a href="/profile" class="text-white">Perfil</a>
-            <a href="/logout" class="text-white">Cerrar sesión</a>
+            <button @onclick="logout" class="text-white">Cerrar sesión</button>
             <a href="/cart" class="relative flex items-center">
-                <img src="/css/cart.svg" alt="Carrito de compras" class="w-6 h-6" />
-                <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">@CartState.CartItems</span>
+                <img src="/css/cart.svg" alt="Carrito de compras" class="h-6 w-6" />
+                <span class="absolute right-0 top-0 inline-flex items-center justify-center rounded-full bg-red-600 px-1 text-xs font-bold leading-none text-red-100">@CartState.CartItems</span>
             </a>
         </Authorized>
         <NotAuthorized>
-            <a href="/login" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700">Iniciar sesión</a>
-            <a href="/signup" class="px-4 py-2 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700">Registrarse</a>
+            <a href="/login" class="rounded-full bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700">Iniciar sesión</a>
+            <a href="/signup" class="rounded-full bg-green-600 px-4 py-2 font-semibold text-white hover:bg-green-700">Registrarse</a>
         </NotAuthorized>
     </AuthorizeView>
 </nav>
@@ -33,5 +35,11 @@
     public void Dispose()
     {
         CartState.OnChange -= StateHasChanged;
+    }
+
+    public async void logout()
+    {
+        await _authService.LogoutAsync();
+        Navigation.NavigateTo("/");
     }
 }

@@ -92,10 +92,19 @@ namespace EccomercePage.Api.Services
 
         public async Task LogoutAsync()
         {
-            await _httpClient.PostAsync("api/user/Logout", new StringContent("{}", Encoding.UTF8, "application/json"));
-            _authenticated = false;
-            _authenticatedUser = Unauthenticated;
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+            const string Empty = "{}";
+            var emptyContent = new StringContent(Empty, Encoding.UTF8, "application/json");
+
+            var result = await _httpClient.PostAsync("api/User/logout", emptyContent);
+
+            if (result.IsSuccessStatusCode)
+            {
+                await _localStorageService.RemoveItemAsync("accessToken");
+
+                // Asegurar que solo una vez se notifique el cambio de estado
+                _authenticated = false;
+                NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(Unauthenticated)));
+            }
         }
 
         public async Task<bool> CheckAuthenticatedAsync()
